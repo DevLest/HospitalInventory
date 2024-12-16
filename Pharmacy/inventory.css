@@ -1,0 +1,99 @@
+/* Basic reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f6;
+}
+
+/* Top navigation bar styles */
+.top-nav {
+    background-color: #34495e;
+    color: white;
+    padding: 3px;
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+/* Side navigation bar styles */
+.side-nav {
+    height: 100%;
+    width: 230px;
+    background-color: #34495e;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+    padding-top: 60px; /* Adjusted to be below top nav */
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main content styles */
+.main-content {
+    margin-left: 230px; /* Adjusted to account for side nav */
+    margin-top: 70px;   /* Adjusted to account for top nav */
+    padding: 20px;
+    transition: 0.3s;
+}
+
+/* Toggle button for side nav */
+.toggle-btn {
+    background-color: #34495e;
+    color: white;
+    border: none;
+    text-decoration: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    position: fixed;
+    top: 7px;
+    left: 10px;
+    z-index: 2;
+}
+
+/* Adjust side nav when hidden */
+.side-nav-hidden {
+    width: 0;
+    padding: 0;
+}
+
+/* Adjust main content width when side nav is hidden */
+.main-content-expanded {
+    margin-left: 0;
+}
+
+/* Ensure the nav-link content is displayed as flex */
+.nav-link {
+    display: flex;
+    align-items: center; /* Vertically center items */
+    padding: 10px 15px;
+    text-decoration: none;
+    color: white;
+    transition: 0.3s;
+    justify-content: space-between; /* Distribute space between items */
+}
+
+/* Flex container for icon and text */
+.sb-nav-link-content {
+    display: flex;
+    align-items: center; /* Vertically center items */
+    flex: 1; /* Allow text to take available space */
+}
+
+.sb-nav-link-icon {
+    margin-right: 10px; /* Space between icon and text */
+}
+
+.sb-sidenav-collapse-arrow {
+    margin-left: auto; /* Push the arrow to the end of the flex container */
+}

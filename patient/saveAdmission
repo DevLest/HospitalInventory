@@ -1,0 +1,29 @@
+<?php
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $admission_id = $_POST['admission_id'];
+    $patient_id = $_POST['patient_id'];
+    $status = $_POST['status'];
+    // ... other form data
+
+    // Your database connection code here
+    $connection = new mysqli("localhost", "your_username", "your_password", "data");
+
+    if ($connection->connect_error) {
+        die("Connection failed: " . $connection->connect_error);
+    }
+
+    $sql = "UPDATE admissionpatient SET 
+            status = '$status'
+            WHERE admission_id = '$admission_id'";
+
+    // ... add other fields to update based on form data
+
+    if ($connection->query($sql) === TRUE) {
+        echo "Record updated successfully";
+    } else {
+        echo "Error updating record: " . $connection->error;
+    }
+
+    $connection->close();
+}
+?>
