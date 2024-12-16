@@ -3,18 +3,8 @@
 $backupDir = 'C:/invoices/';
 $backupFile = $backupDir . 'backup_' . date('Y-m-d_H-i-s') . '.csv';
 
-// Create connection
-$servername = "localhost"; // Adjust to your server
-$username = "root"; // Adjust to your credentials
-$password = "";
-$dbname = "database"; // Adjust to your database name
+require_once('../connection/dbconfig.php'); 
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Fetch data
 $sql = "SELECT 

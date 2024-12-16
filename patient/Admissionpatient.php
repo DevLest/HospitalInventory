@@ -1,18 +1,17 @@
 <?php
-// Database connection
-$db = mysqli_connect('localhost', 'root', '') or die ('Unable to connect. Check your connection parameters.');
-mysqli_select_db($db, 'database') or die(mysqli_error($db));
+require_once('../connection/dbconfig.php'); 
+
 
 // Retrieve the patient's ID from the URL parameter
 $patient_id = $_GET['id'];
 
 // Fetch the patient's details
 $query = "SELECT * FROM patients WHERE id = $patient_id";
-$result = mysqli_query($db, $query);
+$result = mysqli_query($conn, $query);
 $patient = mysqli_fetch_assoc($result);
 
 // Close the database connection
-mysqli_close($db);
+mysqli_close($conn);
 ?>
 
 
@@ -177,12 +176,10 @@ mysqli_close($db);
                       </article>
 
     <?php
-    $db = mysqli_connect('localhost', 'root', '') or
-            die ('Unable to connect. Check your connection parameters.');
-            mysqli_select_db($db, 'opd') or die(mysqli_error($db));
+    require_once('../connection/dbconfig.php'); 
 
     $query = "SELECT * FROM patients";
-    $results = mysqli_query($db, $query);
+    $results = mysqli_query($conn, $query);
     ?>
                   
                       <article style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); height: 67%; width: 67%;">
@@ -225,12 +222,11 @@ mysqli_close($db);
 
 
     <?php
-    $db = mysqli_connect('localhost', 'root', '') or
-            die ('Unable to connect. Check your connection parameters.');
-            mysqli_select_db($db, 'opd') or die(mysqli_error($db));
+    require_once('../connection/dbconfig.php'); 
+
 
     $query = "SELECT * FROM admissionpatient";
-    $results = mysqli_query($db, $query);
+    $results = mysqli_query($conn, $query);
     ?>
                             <!-- Additional table with a unique ID -->
                             <div class="hello" style="background-color: #D5D8DC; height: 50px; ">

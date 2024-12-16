@@ -2,6 +2,7 @@
 session_name('PharmacyStaffSession'); // Use the session name defined for admin
 session_start(); // Start the session
 
+require_once('../connection/dbconfig.php'); 
 
 
 // Check if user is logged in
@@ -109,17 +110,8 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Pharmacy Staff') {
 
 <body>
 <?php
-// Database connection
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';
+require_once('../connection/dbconfig.php'); 
 
-$con = mysqli_connect($host, $username, $password, $database);
-
-if (!$con) {
-    die('Unable to connect to the database. Check your connection parameters.');
-}
 
 // Query to fetch low stock items from both tables
 $low_stock_query = "
@@ -132,7 +124,7 @@ $low_stock_query = "
     WHERE remaining_quantity < 15
 ";
 
-$low_stock_query_run = mysqli_query($con, $low_stock_query);
+$low_stock_query_run = mysqli_query($conn, $low_stock_query);
 
 // Initialize an array to store low stock data and count items
 $low_stock_data = [];
@@ -146,7 +138,7 @@ while ($row = mysqli_fetch_assoc($low_stock_query_run)) {
 // Pass low stock count to JavaScript for the badge
 echo '<script>var lowStockCount = ' . json_encode($total_low_stock_items) . ';</script>';
 
-mysqli_close($con);
+mysqli_close($conn);
 ?>
 
 

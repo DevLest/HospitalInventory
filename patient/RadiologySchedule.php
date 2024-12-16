@@ -4,6 +4,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_name('RadiologySession'); // Set the session name only if no session exists
     session_start(); // Start the session only if not already active
 }
+    
+require_once('../connection/dbconfig.php'); 
 
 // Validate session variables for authorized access
 if (!isset($_SESSION['doctor_id']) || $_SESSION['specialties'] !== 'Radiology') {
@@ -106,18 +108,8 @@ if (!isset($_SESSION['doctor_id']) || $_SESSION['specialties'] !== 'Radiology') 
 </div>
 <div class="first1" style="opacity: 0.9; border-top: 2px solid #b2babb; margin-top: -20px;"></div><br>
 <?php
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "database"; // Change this to your database name
+require_once('../connection/dbconfig.php'); 
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check the connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Check if the user is logged in and is a Radiology doctor
 if (!isset($_SESSION['doctor_id']) || $_SESSION['specialties'] != 'Radiology') {
@@ -208,7 +200,6 @@ if ($dayOfWeek > 0) {
 echo "</tr>";
 echo "</table>";
 
-$conn->close();
 ?>
 
 <!-- Modal for setting availability -->

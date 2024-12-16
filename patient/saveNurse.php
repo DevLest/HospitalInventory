@@ -1,11 +1,6 @@
 <?php
-// Database connection
-$conn = new mysqli("localhost", "root", "", "database");
+require_once('../connection/dbconfig.php'); 
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Prepare the data
 $patient_name = $_POST['patient_name'];

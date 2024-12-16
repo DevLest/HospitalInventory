@@ -153,20 +153,12 @@
     </button>
 </div>
 <?php
-// Database connection
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database'; // Replace with actual database name
-$con = mysqli_connect($host, $username, $password, $database);
+require_once('../connection/dbconfig.php'); 
 
-if (!$con) {
-    die('Database connection failed: ' . mysqli_connect_error());
-}
 
 // Fetch doctors in the "Cardiology" specialty
 $query = "SELECT doctor_id, name, email, clinic_address, contact_number, image, license, specialties FROM doctors WHERE specialties LIKE '%Gastroenterology%'";
-$result = mysqli_query($con, $query);
+$result = mysqli_query($conn, $query);
 
 // Fetch specialties from the database for dynamic display
 $doctor_specialties = [];
@@ -175,7 +167,6 @@ while ($doctor = mysqli_fetch_assoc($result)) {
 }
 
 // Close database connection after fetching data
-mysqli_close($con);
 ?>
 
 <?php foreach ($doctor_specialties as $doctor): ?>
@@ -215,20 +206,12 @@ mysqli_close($con);
             </thead>
             <tbody id="scheduleTableBody">
                 <?php
-                // Database connection
-                $host = 'localhost';
-                $username = 'root';
-                $password = '';
-                $database = 'database'; // Replace with your actual database name
-                $con = mysqli_connect($host, $username, $password, $database);
+                require_once('../connection/dbconfig.php'); 
 
-                if (!$con) {
-                    die('Database connection failed: ' . mysqli_connect_error());
-                }
 
                 // Fetch scheduling data from the Calendar Availability table
                 $query = "SELECT * FROM `calendar_availability`";  // Replace with your actual table name
-                $result = mysqli_query($con, $query);
+                $result = mysqli_query($conn, $query);
 
                 if ($result) {
                     // Loop through and display the data in the table
@@ -244,7 +227,6 @@ mysqli_close($con);
                 }
 
                 // Close database connection
-                mysqli_close($con);
                 ?>
             </tbody>
         </table>

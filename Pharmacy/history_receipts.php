@@ -1,17 +1,6 @@
 <?php
-// Database connection
-$servername = "localhost";  // Your database server name
-$username = "root";         // Your database username
-$password = "";             // Your database password
-$dbname = "database"; // Your database name
+require_once('../connection/dbconfig.php'); 
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // SQL query to fetch receipt data
 $sql = "SELECT id, pos_number, total, created_at, paid_amount, change_amount, discount_amount FROM receipts";

@@ -1,17 +1,5 @@
 <?php
-// Database connection setup
-$servername = "localhost"; // or your database host
-$username = "root"; // your database username
-$password = ""; // your database password
-$database = "database"; // your database name
-
-// Create a connection
-$conn = mysqli_connect($servername, $username, $password, $database);
-
-// Check the connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+require_once('../connection/dbconfig.php'); 
 
 // Pagination variables
 $results_per_page = 11; // number of rows per page

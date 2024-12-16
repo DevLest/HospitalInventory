@@ -138,21 +138,12 @@
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">Today's Sales</div>
             
             <?php
-            // Database connection
-            $host = 'localhost';
-            $username = 'root';
-            $password = '';
-            $database = 'database';
-            
-            $con = mysqli_connect($host, $username, $password, $database);
-            
-            if (!$con) {
-                die('Unable to connect to the database. Check your connection parameters.');
-            }
+            require_once('../connection/dbconfig.php'); 
+
             
             // Query to sum today's total sales
             $today_query = "SELECT SUM(total) as total_sales FROM receipts WHERE DATE(created_at) = CURDATE()";
-            $today_result = mysqli_query($con, $today_query);
+            $today_result = mysqli_query($conn, $today_query);
             $today_sales = mysqli_fetch_assoc($today_result)['total_sales'] ?? 0;
             
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 30px;"> ₱ ' . number_format($today_sales, 2) . ' </h4>';
@@ -168,7 +159,7 @@
             <?php
             // Query to sum weekly total sales
             $weekly_query = "SELECT SUM(total) as total_sales FROM receipts WHERE YEARWEEK(created_at, 1) = YEARWEEK(CURDATE(), 1)";
-            $weekly_result = mysqli_query($con, $weekly_query);
+            $weekly_result = mysqli_query($conn, $weekly_query);
             $weekly_sales = mysqli_fetch_assoc($weekly_result)['total_sales'] ?? 0;
             
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 30px;"> ₱ ' . number_format($weekly_sales, 2) . ' </h4>';
@@ -184,7 +175,7 @@
             <?php
             // Query to sum monthly total sales
             $monthly_query = "SELECT SUM(total) as total_sales FROM receipts WHERE MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())";
-            $monthly_result = mysqli_query($con, $monthly_query);
+            $monthly_result = mysqli_query($conn, $monthly_query);
             $monthly_sales = mysqli_fetch_assoc($monthly_result)['total_sales'] ?? 0;
             
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 30px;"> ₱ ' . number_format($monthly_sales, 2) . ' </h4>';
@@ -200,7 +191,7 @@
             <?php
             // Query to sum yearly total sales
             $yearly_query = "SELECT SUM(total) as total_sales FROM receipts WHERE YEAR(created_at) = YEAR(CURDATE())";
-            $yearly_result = mysqli_query($con, $yearly_query);
+            $yearly_result = mysqli_query($conn, $yearly_query);
             $yearly_sales = mysqli_fetch_assoc($yearly_result)['total_sales'] ?? 0;
             
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 30px;"> ₱ ' . number_format($yearly_sales, 2) . '</h4>';
@@ -212,17 +203,8 @@
 
 
  <?php
-// Database connection
-$host = 'localhost';
-$user = 'root';
-$password = '';
-$dbname = 'database'; // Replace with your actual database name
+require_once('../connection/dbconfig.php'); 
 
-$conn = new mysqli($host, $user, $password, $dbname);
-
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
 
 // Fetch user data
 $query = "SELECT * FROM users"; // Modify as needed for your specific needs
@@ -323,25 +305,10 @@ $loginHistoryResult = $conn->query($loginHistoryQuery);
     </div>
 </div>
 
-<?php
-$conn->close();
-?>
-
 
 <?php
-// Database connection details
-$servername = "localhost"; 
-$username = "root"; 
-$password = ""; 
-$dbname = "database"; 
+require_once('../connection/dbconfig.php'); 
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Initialize search term
 $historyTerm = isset($_POST['search']) ? $_POST['search'] : '';

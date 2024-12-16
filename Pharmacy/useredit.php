@@ -1,20 +1,7 @@
 <?php
 // Start the session
 session_start();
-
-// Database connection parameters
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';  // Your database name
-
-// Create connection
-$conn = mysqli_connect($host, $username, $password, $database);
-
-// Check connection
-if (!$conn) {
-    die('Unable to connect to the database. Check your connection parameters.');
-}
+require_once('../connection/dbconfig.php'); 
 
 // Check if form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

@@ -164,19 +164,8 @@
         </thead>
         <tbody>
             <?php
-            // Database connection details
-            $servername = "localhost"; 
-            $username = "root"; 
-            $password = "";
-            $dbname = "database"; 
+            require_once('../connection/dbconfig.php'); 
 
-            // Create connection
-            $conn = new mysqli($servername, $username, $password, $dbname);
-
-            // Check connection
-            if ($conn->connect_error) {
-                die("Connection failed: " . $conn->connect_error);
-            }
 
             // Initialize the date filter variables
             $from_date = isset($_POST['from_date']) ? $_POST['from_date'] : '';

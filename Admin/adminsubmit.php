@@ -1,6 +1,6 @@
 <?php
-// Database connection
-$conn = mysqli_connect("localhost", "root", "", "database");  // Change these values to your actual database connection
+require_once('../connection/dbconfig.php'); 
+
 
 // Function to add a new Chief Admin
 function addChiefAdmin($name, $username, $password, $email, $chief_license, $contact_number, $address) {

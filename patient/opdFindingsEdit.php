@@ -1,8 +1,6 @@
                                          <!-- PATIENT unique ID (FK)-->
 <?php
-// Database connection
-$db = mysqli_connect('localhost', 'root', '') or die ('Unable to connect. Check your connection parameters.');
-mysqli_select_db($db, 'database') or die(mysqli_error($db));
+require_once('../connection/dbconfig.php'); 
 
 // Check if patient_id is set in the URL
 if(isset($_GET['patient_id'])) {
@@ -11,14 +9,12 @@ if(isset($_GET['patient_id'])) {
     
     // Fetch the patient's details
     $query = "SELECT * FROM patient WHERE id = $patient_id";
-    $result = mysqli_query($db, $query);
+    $result = mysqli_query($conn, $query);
     
     // Check if a patient with the given ID exists
     if(mysqli_num_rows($result) > 0) {
         $patient = mysqli_fetch_assoc($result); 
 
-        // Close the database connection
-        mysqli_close($db);
     } else {
         echo "Patient not found!";
         exit; // Stop execution if patient not found
@@ -227,19 +223,19 @@ if(isset($_GET['patient_id'])) {
                        <div style="display: grid; grid-template-columns: repeat(2, 1fr);">
 
 <?php
-$db = mysqli_connect('localhost', 'root', '', 'database') or die ('Unable to connect. Check your connection parameters.');
+require_once('../connection/dbconfig.php'); 
 
 if(isset($_GET['patient_id'])) {
     $patient_id = $_GET['patient_id'];
     
     $query_patient = "SELECT * FROM patient WHERE id = $patient_id";
-    $result_patient = mysqli_query($db, $query_patient);
+    $result_patient = mysqli_query($conn, $query_patient);
     
     if(mysqli_num_rows($result_patient) > 0) {
         $patient = mysqli_fetch_assoc($result_patient);
 
         $query_vital_signs = "SELECT * FROM vital_signs WHERE patient_id = $patient_id";
-        $result_vital_signs = mysqli_query($db, $query_vital_signs);
+        $result_vital_signs = mysqli_query($conn, $query_vital_signs);
 
         if(mysqli_num_rows($result_vital_signs) > 0) {
             $vital_signs = mysqli_fetch_assoc($result_vital_signs);
@@ -253,7 +249,6 @@ if(isset($_GET['patient_id'])) {
     echo "Patient ID not provided.";
 }
 
-mysqli_close($db);
 ?>
 
 

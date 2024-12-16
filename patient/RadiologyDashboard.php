@@ -1,6 +1,7 @@
 <?php
 session_name('RadiologySession');  // Ensure session name matches the one set during login
 session_start();  // Start session
+require_once('../connection/dbconfig.php'); 
 
 // Check if the user is logged in and is a cardiology doctor
 if (!isset($_SESSION['doctor_id']) || $_SESSION['specialties'] != 'Radiology') {
@@ -320,16 +321,8 @@ button:hover {
         <div class="card text-white mb-4" style="background-color: #DCC7AA; opacity: 0.9; box-shadow: 0 2px 5px rgba(0, 0, 0, 1.9);" >
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">Appointment Today</div>
          <?php
-                $host = 'localhost';
-                $username = 'root';
-                $password = '';
-                $database = 'database';
+                require_once('../connection/dbconfig.php'); 
 
-                $con = mysqli_connect($host, $username, $password, $database);
-
-                if (!$con) {
-                    die('Unable to connect to the database. Check your connection parameters.');
-                }
 
                 // Define the specialty you want to filter by (e.g., Radiology)
                 $specialty = 'Radiology';  // Example specialty
@@ -342,7 +335,7 @@ button:hover {
                     WHERE d.specialties = '$specialty'
                 ";
 
-                $dash_category_query_run = mysqli_query($con, $dash_category_query);
+                $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
                 if ($appointments_total = mysqli_num_rows($dash_category_query_run)) {
                     echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 25px; position: relative;">' . $appointments_total . ' <i class="fas fa-calendar-day" style="color: black;"></i></h4>';
@@ -352,7 +345,6 @@ button:hover {
                     echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Data for Radiology</h4>';
                 }
 
-                mysqli_close($con);
                 ?>
     </div>
 </div>
@@ -364,16 +356,8 @@ button:hover {
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">Appointment Pending</div>
         
         <?php
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
+        require_once('../connection/dbconfig.php'); 
 
-        $con = mysqli_connect($host, $username, $password, $database);
-
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
 
         // Define the specialty you want to filter by (e.g., Radiology)
         $specialty = 'Radiology';  // Example specialty
@@ -387,7 +371,7 @@ button:hover {
             AND a.status = 'Pending'
         ";
 
-        $pending_appointments_query_run = mysqli_query($con, $pending_appointments_query);
+        $pending_appointments_query_run = mysqli_query($conn, $pending_appointments_query);
 
         if ($pending_appointments_query_run) {
             // Fetch the count of pending appointments
@@ -403,7 +387,6 @@ button:hover {
             }
         } 
 
-        mysqli_close($con);
 ?>
     </div>
 </div>
@@ -413,16 +396,8 @@ button:hover {
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">Appointment Complete</div>
 
        <?php
-            $host = 'localhost';
-            $username = 'root';
-            $password = '';
-            $database = 'database';
+            require_once('../connection/dbconfig.php'); 
 
-            $con = mysqli_connect($host, $username, $password, $database);
-
-            if (!$con) {
-                die('Unable to connect to the database. Check your connection parameters.');
-            }
 
             // Define the specialty you want to filter by (e.g., Radiology)
             $specialty = 'Radiology';  // Example specialty
@@ -436,7 +411,7 @@ button:hover {
                 AND a.status = 'Approved'
             ";
 
-            $approved_appointments_query_run = mysqli_query($con, $approved_appointments_query);
+            $approved_appointments_query_run = mysqli_query($conn, $approved_appointments_query);
 
             if ($approved_appointments_query_run) {
                 // Fetch the count of approved appointments
@@ -454,7 +429,6 @@ button:hover {
                 echo '<h4 class="mb-0" style="z-index: 2; position: relative;">Error fetching data</h4>';
             }
 
-            mysqli_close($con);
             ?>
     </div>
 </div>
@@ -464,16 +438,7 @@ button:hover {
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">Total Appointments</div>
 
        <?php
-            $host = 'localhost';
-            $username = 'root';
-            $password = '';
-            $database = 'database';
-
-            $con = mysqli_connect($host, $username, $password, $database);
-
-            if (!$con) {
-                die('Unable to connect to the database. Check your connection parameters.');
-            }
+           require_once('../connection/dbconfig.php'); 
 
             // Define the specialty you want to filter by (e.g., Radiology)
             $specialty = 'Radiology';  // Example specialty
@@ -486,7 +451,7 @@ button:hover {
                 WHERE d.specialties = '$specialty'
             ";
 
-            $total_appointments_query_run = mysqli_query($con, $total_appointments_query);
+            $total_appointments_query_run = mysqli_query($conn, $total_appointments_query);
 
             if ($total_appointments_query_run) {
                 // Fetch the count of total appointments
@@ -504,7 +469,6 @@ button:hover {
                 echo '<h4 class="mb-0" style="z-index: 2; position: relative;">Error fetching data</h4>';
             }
 
-            mysqli_close($con);
             ?>
     </div>
 </div>
@@ -512,17 +476,8 @@ button:hover {
 </div>
 <div class="first1" style="opacity: 0.9; border-top: 2px solid #b2babb;"></div><br>
 <?php
-// Database connection
-$host = 'localhost';
-$user = 'root';
-$password = '';
-$dbname = 'database'; // Replace with your actual database name
+require_once('../connection/dbconfig.php'); 
 
-$conn = new mysqli($host, $user, $password, $dbname);
-
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
 
 
 // Ensure the user is logged in and is a cardiology doctor

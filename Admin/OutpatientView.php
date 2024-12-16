@@ -1,19 +1,16 @@
                                          <!-- PATIENT unique ID (FK)-->
 <?php
-// Database connection
-$db = mysqli_connect('localhost', 'root', '') or die ('Unable to connect. Check your connection parameters.');
-mysqli_select_db($db, 'database') or die(mysqli_error($db));
+require_once('../connection/dbconfig.php'); 
 
 // Retrieve the patient's ID from the URL parameter
 $patient_id = $_GET['id'];
 
 // Fetch the patient's details
 $query = "SELECT * FROM patient WHERE id = $patient_id";
-$result = mysqli_query($db, $query);
+$result = mysqli_query($conn, $query);
 $patient = mysqli_fetch_assoc($result);
 
-// Close the database connection
-mysqli_close($db);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -240,9 +237,8 @@ mysqli_close($db);
                       </article>
 
 <?php
-// Connect to the database
-$db = mysqli_connect('localhost', 'root', '') or die ('Unable to connect. Check your connection parameters.');
-mysqli_select_db($db, 'database') or die(mysqli_error($db));
+require_once('../connection/dbconfig.php'); 
+
 
 // Initialize a variable to hold the success message
 $success_message1 = '';
@@ -267,18 +263,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save1'])) {
             (patient_id, history_of_patient_illness, attending_physician, respiratory_rate, blood_pressure, capillary_refill, temperature, weight, pulse_rate)
             VALUES ('$patient_id', '$history_of_patient_illness', '$attending_physician', '$respiratory_rate', '$blood_pressure', '$capillary_refill', '$temperature', '$weight', '$pulse_rate')";
 
-    if(mysqli_query($db, $query)) {
+    if(mysqli_query($conn, $query)) {
         // Data inserted successfully, set the success message
         $success_message1 = "Vital signs data inserted successfully!";
     } else {
         // Error occurred while inserting data
-        echo "Error: " . $query . "<br>" . mysqli_error($db);
+        echo "Error: " . $query . "<br>" . mysqli_error($conn);
     }
 }
 
 // Fetch vital signs data for display
 $query = "SELECT * FROM vital_signs WHERE patient_id = '$patient_id'";
-$results = mysqli_query($db, $query);
+$results = mysqli_query($conn, $query);
 ?>
 
 <article style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); height: 67%; width: 67%;">
@@ -411,15 +407,14 @@ $results = mysqli_query($db, $query);
     });
 </script>
 <?php
-$db = mysqli_connect('localhost', 'root', '') or die('Unable to connect. Check your connection parameters.');
-mysqli_select_db($db, 'database') or die(mysqli_error($db));
+require_once('../connection/dbconfig.php'); 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save'])) {
     // Get the selected patient_id from the form
     $patient_id = isset($_POST["patient_id"]) ? $_POST["patient_id"] : '';
 
     // Fetch patient information based on the selected patient_id
-    $patient_query = mysqli_query($db, "SELECT * FROM patient WHERE id = '$patient_id'");
+    $patient_query = mysqli_query($conn, "SELECT * FROM patient WHERE id = '$patient_id'");
     $patient_row = mysqli_fetch_assoc($patient_query);
 
     if ($patient_row) {
@@ -438,15 +433,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save'])) {
         $query = "INSERT INTO admissionpatient
             (admission_id, patient_id, admittedby, parent_name, ward, attending_physician, chargeaccountto, relationtoparent, address, mobilenumber, totalpayment, status)
             VALUES (NULL, '$patient_id', '$admittedby', '$parent_name', '$ward', '$attending_physician', '$chargeaccountto', '$relationtoparent', '$address', '$mobilenumber', '$totalpayment', 'IN PATIENT')";
-        mysqli_query($db, $query) or die('Error in updating record in Database: ' . mysqli_error($db));
+        mysqli_query($conn, $query) or die('Error in updating record in Database: ' . mysqli_error($conn));
     }
 }
 ?>
 
 
 <?php
-    $db = mysqli_connect('localhost', 'root', '') or die ('Unable to connect. Check your connection parameters.');
-    mysqli_select_db($db, 'database') or die(mysqli_error($db));
+   require_once('../connection/dbconfig.php'); 
 
     // Check if the form is submitted
     if(isset($_POST['save'])) {
@@ -456,7 +450,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save'])) {
     }
 
     $query = "SELECT * FROM admissionpatient WHERE patient_id = '$patient_id'";
-    $results = mysqli_query($db, $query);
+    $results = mysqli_query($conn, $query);
     ?>
                           <div class="hello" style="background-color: #D5D8DC; height: 50px; ">
     <h1 style="font-size: 25px; text-align: left; color: green; margin-bottom: 40px; padding: 10px;">
@@ -572,12 +566,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['save'])) {
 </script>
 
     <?php
-    $db = mysqli_connect('localhost', 'root', '') or
-            die ('Unable to connect. Check your connection parameters.');
-            mysqli_select_db($db, 'database') or die(mysqli_error($db));
+    require_once('../connection/dbconfig.php'); 
+
 
     $query = "SELECT * FROM admissionpatient";
-    $results = mysqli_query($db, $query);
+    $results = mysqli_query($conn, $query);
     ?>
                         <script>
                             document.getElementById("modalToggle1").addEventListener("click", function(event) {

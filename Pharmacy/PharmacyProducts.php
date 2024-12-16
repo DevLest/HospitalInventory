@@ -56,19 +56,8 @@
             </thead>
             <tbody>
                 <?php
-                // Database connection
-                $servername = "localhost";
-                $username = "root";
-                $password = "";
-                $dbname = "database"; // Replace with your database name
+                require_once('../connection/dbconfig.php'); 
 
-                // Create connection
-                $conn = new mysqli($servername, $username, $password, $dbname);
-
-                // Check connection
-                if ($conn->connect_error) {
-                    die("Connection failed: " . $conn->connect_error);
-                }
 
                 // Set the number of rows per page
                 $rows_per_page = 5;

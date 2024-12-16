@@ -1,16 +1,6 @@
 <?php
-// Replace with actual database connection details
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "database";
+require_once('../connection/dbconfig.php'); 
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Get the last POS number from the receipts table
 $sql = "SELECT pos_number FROM receipts ORDER BY id DESC LIMIT 1";

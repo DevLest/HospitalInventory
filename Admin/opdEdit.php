@@ -1,8 +1,7 @@
                                          <!-- PATIENT unique ID (FK)-->
 <?php
-// Database connection
-$db = mysqli_connect('localhost', 'root', '') or die ('Unable to connect. Check your connection parameters.');
-mysqli_select_db($db, 'database') or die(mysqli_error($db));
+require_once('../connection/dbconfig.php'); 
+
 
 // Check if patient_id is set in the URL
 if(isset($_GET['patient_id'])) {
@@ -11,14 +10,13 @@ if(isset($_GET['patient_id'])) {
     
     // Fetch the patient's details
     $query = "SELECT * FROM patient WHERE id = $patient_id";
-    $result = mysqli_query($db, $query);
+    $result = mysqli_query($conn, $query);
     
     // Check if a patient with the given ID exists
     if(mysqli_num_rows($result) > 0) {
         $patient = mysqli_fetch_assoc($result);
 
-        // Close the database connection
-        mysqli_close($db);
+       
     } else {
         echo "Patient not found!";
         exit; // Stop execution if patient not found
@@ -275,8 +273,7 @@ if(isset($_GET['patient_id'])) {
             <p class="bold-text" style="text-align: center; font-size: 20px; font-weight: bold;">OUT PATIENT FINDINGS</p>
             <div style="display: grid; grid-template-columns: repeat(2, 1fr);">
                 <?php
-                // Database connection
-                $db = mysqli_connect('localhost', 'root', '', 'database') or die ('Unable to connect. Check your connection parameters.');
+               require_once('../connection/dbconfig.php'); 
 
                 // Check if patient_id and vital_signs_id are set in the URL
                 if(isset($_GET['patient_id']) && isset($_GET['vital_signs_id'])) {
@@ -286,11 +283,11 @@ if(isset($_GET['patient_id'])) {
 
                     // Fetch the patient's details
                     $query_patient = "SELECT * FROM patient WHERE id = $patient_id";
-                    $result_patient = mysqli_query($db, $query_patient);
+                    $result_patient = mysqli_query($conn, $query_patient);
 
                     // Fetch the vital signs data for the specified vital_signs_id
                     $query_vital_signs = "SELECT * FROM vital_signs WHERE id = $vital_signs_id";
-                    $result_vital_signs = mysqli_query($db, $query_vital_signs);
+                    $result_vital_signs = mysqli_query($conn, $query_vital_signs);
 
                     // Check if both patient and vital signs data are found
                     if(mysqli_num_rows($result_patient) > 0 && mysqli_num_rows($result_vital_signs) > 0) {

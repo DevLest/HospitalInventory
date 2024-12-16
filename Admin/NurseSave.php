@@ -13,17 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $attending_doctor = $_POST['attending_doctor'];
     $status = $_POST['status'];
 
-$conn = new mysqli("localhost", "root", "", "database");
+require_once('../connection/dbconfig.php'); 
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
 
     // Prepare SQL update query
     $sql = "UPDATE er_patient SET 

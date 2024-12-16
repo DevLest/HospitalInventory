@@ -1,10 +1,6 @@
 <?php
-$db = mysqli_connect('localhost', 'root', '') or
-        die ('Unable to connect. Check your connection parameters.');
-        mysqli_select_db($db, 'database') or die(mysqli_error($db));
+require_once('../connection/dbconfig.php'); 
 
-$query = "SELECT * FROM patient";
-$results = mysqli_query($db, $query);
 ?>
 <!DOCTYPE html>
 <html lang="en">

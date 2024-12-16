@@ -11,23 +11,12 @@ if (!isset($_SESSION['username'])) {
 // Page content for logged-in users
 ?>
 <?php
-// Database connection parameters
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';
+require_once('../connection/dbconfig.php'); 
 
-// Connect to the database
-$con = mysqli_connect($host, $username, $password, $database);
-
-// Check connection
-if (!$con) {
-    die('Unable to connect to the database. Check your connection parameters.');
-}
 
 // Query to fetch all dates from your table
 $query = "SELECT date FROM patient";
-$result = mysqli_query($con, $query);
+$result = mysqli_query($conn, $query);
 
 // Initialize an array to store the count of patients for each month
 $monthlyCounts = array_fill(1, 12, 0);
@@ -40,7 +29,6 @@ while ($row = mysqli_fetch_assoc($result)) {
 }
 
 // Close the database connection
-mysqli_close($con);
 
 // Prepare data for the bar chart
 $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -147,12 +135,8 @@ foreach ($monthlyCounts as $month => $count) {
 }
 </style>
 <?php
-// Database connection
-$conn = new mysqli('localhost', 'root', '', 'database'); // Replace 'your_database_name' with your actual database name
+require_once('../connection/dbconfig.php'); 
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Fetch low stock items from pharmacy_medicines_products
 $lowStockMedicinesQuery = "SELECT medicine_product, remain_quantity, expiry 
@@ -348,20 +332,11 @@ $expiringMedicinesResult = $conn->query($expiringMedicinesQuery);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖮𝗎𝗍𝖯𝖺𝗍𝗂𝖾𝗇𝗍𝗌</div>
         
         <?php
-            $host = 'localhost';
-            $username = 'root';
-            $password = '';
-            $database = 'database';
-
-            $con = mysqli_connect($host, $username, $password, $database);
-
-            if (!$con) {
-                die('Unable to connect to the database. Check your connection parameters.');
-            }
+            require_once('../connection/dbconfig.php'); 
 
 
             $dash_category_query = "SELECT * from patient";
-            $dash_category_query_run = mysqli_query($con, $dash_category_query);
+            $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
             if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
                 echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 35px;">  ' . $tblevents_total . '  <i class="fas fa-user-injured patient-icon" style="color: black; "></i> </h4>';
@@ -369,7 +344,6 @@ $expiringMedicinesResult = $conn->query($expiringMedicinesQuery);
                 echo '<h4 class="mb-0"> No Data </h4>';
             }
 
-            mysqli_close($con);
             ?>
 
         
@@ -383,20 +357,12 @@ $expiringMedicinesResult = $conn->query($expiringMedicinesQuery);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖶𝖺𝗋𝖽𝗌</div>
         
         <?php
-            $host = 'localhost';
-            $username = 'root';
-            $password = '';
-            $database = 'database';
+            require_once('../connection/dbconfig.php'); 
 
-            $con = mysqli_connect($host, $username, $password, $database);
-
-            if (!$con) {
-                die('Unable to connect to the database. Check your connection parameters.');
-            }
 
 
             $dash_category_query = "SELECT * from admissionpatient";
-            $dash_category_query_run = mysqli_query($con, $dash_category_query);
+            $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
             if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
                 echo ' <h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 35px;">  ' . $tblevents_total . '  <i class="fas fa-user-nurse nurse-icon" style="color: black; "></i> </h4>';
@@ -404,7 +370,6 @@ $expiringMedicinesResult = $conn->query($expiringMedicinesQuery);
                 echo '<h4 class="mb-0"> No Data </h4>';
             }
 
-            mysqli_close($con);
             ?>
 
     </div>
@@ -415,20 +380,11 @@ $expiringMedicinesResult = $conn->query($expiringMedicinesQuery);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖠𝖼𝗍𝗂𝗏𝖾 𝖯𝖺𝗍𝗂𝖾𝗇𝗍'𝗌 𝖠𝖽𝗆𝗂𝗍𝗍𝖾𝖽</div>
 
                                     <?php
-            $host = 'localhost';
-            $username = 'root';
-            $password = '';
-            $database = 'database';
-
-            $con = mysqli_connect($host, $username, $password, $database);
-
-            if (!$con) {
-                die('Unable to connect to the database. Check your connection parameters.');
-            }
+           require_once('../connection/dbconfig.php'); 
 
 
             $dash_category_query = "SELECT * from admissionpatient";
-            $dash_category_query_run = mysqli_query($con, $dash_category_query);
+            $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
             if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
                 echo ' <h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 35px;">  ' . $tblevents_total . '  <i class="fas fa-user" style="color: black; "></i> </h4>';
@@ -436,7 +392,6 @@ $expiringMedicinesResult = $conn->query($expiringMedicinesQuery);
                 echo '<h4 class="mb-0"> No Data </h4>';
             }
 
-            mysqli_close($con);
             ?>
 
     </div>
@@ -447,23 +402,14 @@ $expiringMedicinesResult = $conn->query($expiringMedicinesQuery);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖠𝗉𝗉𝗈𝗂𝗇𝗍𝗆𝖾𝗇𝗍𝗌</div>
 
         <?php
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';
-
-$con = mysqli_connect($host, $username, $password, $database);
-
-if (!$con) {
-    die('Unable to connect to the database. Check your connection parameters.');
-}
+require_once('../connection/dbconfig.php'); 
 
 // Get today's date in the format 'YYYY-MM-DD'
 $today = date('Y-m-d');
 
 // Query to sum the total for today's receipts
 $dash_category_query = "SELECT SUM(total) AS today_total FROM receipts WHERE DATE(created_at) = '$today'";
-$dash_category_query_run = mysqli_query($con, $dash_category_query);
+$dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
 // Fetch the result for receipts total
 $row = mysqli_fetch_assoc($dash_category_query_run);
@@ -471,7 +417,7 @@ $today_total = $row['today_total'] ?? 0; // Default to 0 if no records found
 
 // Query to count the total number of appointments in the appointments table
 $appointment_query = "SELECT COUNT(*) AS total_appointments FROM appointments";
-$appointment_query_run = mysqli_query($con, $appointment_query);
+$appointment_query_run = mysqli_query($conn, $appointment_query);
 
 // Fetch the result for appointments total
 $appointment_row = mysqli_fetch_assoc($appointment_query_run);
@@ -483,7 +429,6 @@ echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-si
 echo '' . $total_appointments . ' <i class="fas fa-calendar-check" style="color: black;"></i>';
 echo '</h4>';
 
-mysqli_close($con);
 ?>
 
     </div>
@@ -505,16 +450,8 @@ mysqli_close($con);
     <!-- Table Section -->
     <div class="col-xl-6">
 <?php
-    // Database connection
-    $host = 'localhost';
-    $username = 'root';
-    $password = '';
-    $database = 'database'; // Replace with actual database name
-    $con = mysqli_connect($host, $username, $password, $database);
+    require_once('../connection/dbconfig.php'); 
 
-    if (!$con) {
-        die('Database connection failed: ' . mysqli_connect_error());
-    }
 
     // Pagination setup
     $limit = 11; // Number of records per page
@@ -532,11 +469,11 @@ mysqli_close($con);
               JOIN doctors d ON a.doctor_id = d.doctor_id
               LIMIT $limit OFFSET $offset"; // Limit the number of results
 
-    $result = mysqli_query($con, $query);
+    $result = mysqli_query($conn, $query);
 
     // Query to get the total number of records for pagination
     $count_query = "SELECT COUNT(*) AS total FROM appointments";
-    $count_result = mysqli_query($con, $count_query);
+    $count_result = mysqli_query($conn, $count_query);
     $count_row = mysqli_fetch_assoc($count_result);
     $total_records = $count_row['total'];
     $total_pages = ceil($total_records / $limit); // Calculate total pages
@@ -600,11 +537,10 @@ mysqli_close($con);
         echo '</div>';  // End card-body
         echo '</div>';  // End card
     } else {
-        echo 'Error fetching appointments: ' . mysqli_error($con);
+        echo 'Error fetching appointments: ' . mysqli_error($conn);
     }
 
     // Close database connection
-    mysqli_close($con);
 ?>
 
 

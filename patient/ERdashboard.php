@@ -11,23 +11,12 @@ if (!isset($_SESSION['username'])) {
 // Page content for logged-in users
 ?>
 <?php
-// Database connection parameters
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';
+require_once('../connection/dbconfig.php'); 
 
-// Connect to the database
-$con = mysqli_connect($host, $username, $password, $database);
-
-// Check connection
-if (!$con) {
-    die('Unable to connect to the database. Check your connection parameters.');
-}
 
 // Query to fetch all dates from your table
 $query = "SELECT created_at FROM er_patient";
-$result = mysqli_query($con, $query);
+$result = mysqli_query($conn, $query);
 
 // Initialize an array to store the count of patients for each month
 $monthlyCounts = array_fill(1, 12, 0);
@@ -39,8 +28,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     $monthlyCounts[$month]++;
 }
 
-// Close the database connection
-mysqli_close($con);
+
 
 // Prepare data for the bar chart
 $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -222,20 +210,11 @@ foreach ($monthlyCounts as $month => $count) {
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖮𝗎𝗍𝖯𝖺𝗍𝗂𝖾𝗇𝗍𝗌</div>
         
         <?php
-            $host = 'localhost';
-            $username = 'root';
-            $password = '';
-            $database = 'database';
-
-            $con = mysqli_connect($host, $username, $password, $database);
-
-            if (!$con) {
-                die('Unable to connect to the database. Check your connection parameters.');
-            }
+            require_once('../connection/dbconfig.php'); 
 
 
             $dash_category_query = "SELECT * from er_patient";
-            $dash_category_query_run = mysqli_query($con, $dash_category_query);
+            $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
             if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
                 echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 35px;">  ' . $tblevents_total . '  <i class="fas fa-user-injured patient-icon" style="color: black; "></i> </h4>';
@@ -243,7 +222,6 @@ foreach ($monthlyCounts as $month => $count) {
                 echo '<h4 class="mb-0"> No Data </h4>';
             }
 
-            mysqli_close($con);
             ?>
 
         
@@ -257,20 +235,12 @@ foreach ($monthlyCounts as $month => $count) {
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">ER Nurse</div>
         
         <?php
-            $host = 'localhost';
-            $username = 'root';
-            $password = '';
-            $database = 'database';
+            require_once('../connection/dbconfig.php'); 
 
-            $con = mysqli_connect($host, $username, $password, $database);
-
-            if (!$con) {
-                die('Unable to connect to the database. Check your connection parameters.');
-            }
 
 
             $dash_category_query = "SELECT * from admissionpatient";
-            $dash_category_query_run = mysqli_query($con, $dash_category_query);
+            $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
             if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
                 echo ' <h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 35px;">  ' . $tblevents_total . '  <i class="fas fa-user-nurse nurse-icon" style="color: black; "></i> </h4>';
@@ -278,7 +248,6 @@ foreach ($monthlyCounts as $month => $count) {
                 echo '<h4 class="mb-0"> No Data </h4>';
             }
 
-            mysqli_close($con);
             ?>
 
     </div>
@@ -289,20 +258,11 @@ foreach ($monthlyCounts as $month => $count) {
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖠𝖼𝗍𝗂𝗏𝖾 𝖯𝖺𝗍𝗂𝖾𝗇𝗍'𝗌 𝖠𝖽𝗆𝗂𝗍𝗍𝖾𝖽</div>
 
                                     <?php
-            $host = 'localhost';
-            $username = 'root';
-            $password = '';
-            $database = 'database';
-
-            $con = mysqli_connect($host, $username, $password, $database);
-
-            if (!$con) {
-                die('Unable to connect to the database. Check your connection parameters.');
-            }
+            require_once('../connection/dbconfig.php'); 
 
 
             $dash_category_query = "SELECT * from admission_refer";
-            $dash_category_query_run = mysqli_query($con, $dash_category_query);
+            $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
             if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
                 echo ' <h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 35px;">  ' . $tblevents_total . '  <i class="fas fa-user" style="color: black; "></i> </h4>';
@@ -310,7 +270,6 @@ foreach ($monthlyCounts as $month => $count) {
                 echo '<h4 class="mb-0"> No Data </h4>';
             }
 
-            mysqli_close($con);
             ?>
 
     </div>
@@ -335,19 +294,8 @@ foreach ($monthlyCounts as $month => $count) {
 
 
     <?php
-// Database connection settings
-$servername = "localhost";
-$username = "root"; // Replace with your database username
-$password = ""; // Replace with your database password
-$dbname = "database"; // Replace with your database name
+require_once('../connection/dbconfig.php'); 
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Get the count of 'Admitted' and 'Referred' statuses from the admission_refer table
 $admittedQuery = "SELECT COUNT(*) AS total_admitted FROM admission_refer WHERE status = 'Admitted'";

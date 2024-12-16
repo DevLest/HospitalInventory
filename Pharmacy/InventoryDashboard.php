@@ -1,6 +1,7 @@
 <?php
 session_name('PharmacyAdminSession'); // Use the session name defined for admin
 session_start(); // Start the session
+require_once('../connection/dbconfig.php'); 
 
 
 
@@ -107,12 +108,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Pharmacy Admin') {
 }
 </style>
 <?php
-// Database connection
-$conn = new mysqli('localhost', 'root', '', 'database'); // Replace 'your_database_name' with your actual database name
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+require_once('../connection/dbconfig.php'); 
 
 // Fetch low stock items from pharmacy_medicines_products
 $lowStockMedicinesQuery = "SELECT medicine_product, remain_quantity, expiry 
@@ -230,17 +226,8 @@ $expiringMedicinesResult = $conn->query($expiringMedicinesQuery);
 
 <body>
 <?php
-// Database connection
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';
+require_once('../connection/dbconfig.php'); 
 
-$con = mysqli_connect($host, $username, $password, $database);
-
-if (!$con) {
-    die('Unable to connect to the database. Check your connection parameters.');
-}
 
 // Query to fetch low stock items from both tables
 $low_stock_query = "
@@ -253,7 +240,7 @@ $low_stock_query = "
     WHERE remaining_quantity < 15
 ";
 
-$low_stock_query_run = mysqli_query($con, $low_stock_query);
+$low_stock_query_run = mysqli_query($conn, $low_stock_query);
 
 // Initialize an array to store low stock data and count items
 $low_stock_data = [];
@@ -267,7 +254,6 @@ while ($row = mysqli_fetch_assoc($low_stock_query_run)) {
 // Pass low stock count to JavaScript for the badge
 echo '<script>var lowStockCount = ' . json_encode($total_low_stock_items) . ';</script>';
 
-mysqli_close($con);
 ?>
 
 
@@ -433,8 +419,8 @@ mysqli_close($con);
     <!-- Box Section with Bootstrap's grid system -->
     <div class="row"> <!-- Use row class to create a horizontal group of columns -->
        <div class="col-xl-3 col-md-6">
-        <div class="card text-white mb-4" style="background-color: #DCC7AA; opacity: 0.9; box-shadow: 0 2px 5px rgba(0, 0, 0, 1.9);" >
-            <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖬𝖾𝖽𝗂𝖼𝗂𝗇𝖾𝗌</div>
+    <div class="card text-white mb-4" style="background-color: #DCC7AA; opacity: 0.9; box-shadow: 0 2px 5px rgba(0, 0, 0, 1.9);" >
+        <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖬𝖾𝖽𝗂𝖼𝗂𝗇𝖾𝗌</div>
         
         <?php
         $host = 'localhost';
@@ -442,14 +428,14 @@ mysqli_close($con);
         $password = '';
         $database = 'database';
 
-        $con = mysqli_connect($host, $username, $password, $database);
+        $conn = mysqli_connect($host, $username, $password, $database);
 
-        if (!$con) {
+        if (!$conn) {
             die('Unable to connect to the database. Check your connection parameters.');
         }
 
         $dash_category_query = "SELECT * from pharmacy_medicines_products";
-        $dash_category_query_run = mysqli_query($con, $dash_category_query);
+        $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
         if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 30px; z-index: 2; position: relative;">' . $tblevents_total . '  <i class="fas fa-capsules" style="color: black;"></i></h4>';
@@ -457,111 +443,451 @@ mysqli_close($con);
             echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Data</h4>';
         }
 
-        mysqli_close($con);
+        mysqli_close($conn);
         ?>
         
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
-            <a class="small text-white stretched-link" href="ListPatient.php">View Medicines</a>
+            <a href="#" class="small text-white" data-toggle="modal" data-target="#medicinesModal">View Medicines</a>
             <div class="small text-white"><i class="fas fa-angle-right"></i></div>
         </div>
     </div>
 </div>
+   <!-- Medicines List Modal -->
+<div class="modal fade" id="medicinesModal" tabindex="-1" role="dialog" aria-labelledby="medicinesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #DCC7AA; color: green;">
+                <h5 class="modal-title" id="medicinesModalLabel">Medicines List</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Search Bar -->
+                <div class="mb-3">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search Medicines...">
+                </div>
+                
+                <!-- Medicines Table -->
+<table class="table table-bordered" id="medicinesTable">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Medicine Name</th>
+            <th>Generic Name</th>
+            <th>Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        // Pagination setup
+        $limit = 5;  // Items per page
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $offset = ($page - 1) * $limit;
+
+        // Reconnect to the database to fetch medicines list with pagination
+        $conn = mysqli_connect($host, $username, $password, $database);
+        if (!$conn) {
+            die('Unable to connect to the database. Check your connection parameters.');
+        }
+
+        // Query to fetch medicine products with pagination
+        $medicines_query = "SELECT * FROM pharmacy_medicines_products LIMIT $limit OFFSET $offset";
+        $medicines_result = mysqli_query($conn, $medicines_query);
+
+        // Fetch total number of records for pagination
+        $total_query = "SELECT COUNT(*) AS total FROM pharmacy_medicines_products";
+        $total_result = mysqli_query($conn, $total_query);
+        $total_row = mysqli_fetch_assoc($total_result);
+        $total_records = $total_row['total'];
+        $total_pages = ceil($total_records / $limit);
+
+        if (mysqli_num_rows($medicines_result) > 0) {
+            while ($medicine = mysqli_fetch_assoc($medicines_result)) {
+                // Display image with proper class and styling
+                echo "<tr>
+                        <td><img src='" . $medicine['image'] . "' alt='Product Image' class='img-fluid' style='max-width: 100px;'></td>
+                        <td>" . $medicine['medicine_product'] . "</td>
+                        <td>" . $medicine['generic_name'] . "</td>
+                        <td>" . $medicine['category'] . "</td>
+                      </tr>";
+            }
+        } else {
+            echo "<tr><td colspan='4'>No medicines found</td></tr>";
+        }
+
+        ?>
+    </tbody>
+</table>
+
+
+               <!-- Pagination Controls -->
+<div class="d-flex justify-content-start">
+    <div class="d-flex align-items-center">
+        <!-- Previous Button -->
+        <?php if ($page > 1): ?>
+            <a href="?page=<?= $page - 1 ?>" class="btn btn-secondary btn-sm">Previous</a>
+        <?php else: ?>
+            <button class="btn btn-secondary btn-sm" disabled>Previous</button>
+        <?php endif; ?>
+
+        <!-- Page Info -->
+        <span class="ml-3">Page <?= $page ?> of <?= $total_pages ?></span>
+
+        <!-- Next Button -->
+        <?php if ($page < $total_pages): ?>
+            <a href="?page=<?= $page + 1 ?>" class="btn btn-secondary btn-sm ml-3">Next</a>
+        <?php else: ?>
+            <button class="btn btn-secondary btn-sm ml-3" disabled>Next</button>
+        <?php endif; ?>
+    </div>
+</div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for search functionality -->
+<script>
+    document.getElementById('searchInput').addEventListener('input', function() {
+        let filter = this.value.toUpperCase();
+        let rows = document.querySelectorAll('#medicinesTable tbody tr');
+        
+        rows.forEach(function(row) {
+            let cells = row.querySelectorAll('td');
+            let match = false;
+            cells.forEach(function(cell) {
+                if (cell.textContent.toUpperCase().includes(filter)) {
+                    match = true;
+                }
+            });
+            row.style.display = match ? '' : 'none';
+        });
+    });
+</script>
+
+
 
 
         <!-- Repeat for other three columns -->
         <div class="col-xl-3 col-md-6">
-        <div class="card text-white mb-4" style="background-color: #F7882F; opacity: 0.9; box-shadow: 0 2px 5px rgba(0, 0, 0, 1.9);" >
-            <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖯𝗋𝗈𝖽𝗎𝖼𝗍𝗌</div>
+    <div class="card text-white mb-4" style="background-color: #F7882F; opacity: 0.9; box-shadow: 0 2px 5px rgba(0, 0, 0, 1.9);">
+        <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖯𝗋𝗈𝖽𝗎𝖼𝗍𝗌</div>
         
         <?php
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
+        require_once('../connection/dbconfig.php'); 
 
-        $con = mysqli_connect($host, $username, $password, $database);
 
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
-
+        // Query to count total number of products
         $dash_category_query = "SELECT * from pharmacy_products";
-        $dash_category_query_run = mysqli_query($con, $dash_category_query);
+        $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
         if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 30px; z-index: 2; position: relative;">' . $tblevents_total . ' <i class="fas fa-box" style="color: black;"></i></h4>';
-
         } else {
             echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Data</h4>';
         }
 
-        mysqli_close($con);
+        // Close the database connection
         ?>
-
+        
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
-            <a class="small text-white stretched-link" href="ListPatient.php">View Patients</a>
+            <a href="#" class="small text-white" data-toggle="modal" data-target="#productsModal">View Products</a>
             <div class="small text-white"><i class="fas fa-angle-right"></i></div>
         </div>
     </div>
 </div>
+
+<!-- Products List Modal -->
+<div class="modal fade" id="productsModal" tabindex="-1" role="dialog" aria-labelledby="productsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #F7882F; color: green;">
+                <h5 class="modal-title" id="productsModalLabel">Products List</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Search Bar -->
+                <div class="mb-3">
+                    <input type="text" id="searchInput1" class="form-control" placeholder="Search Products...">
+                </div>
+                
+                <!-- Products Table -->
+                <table class="table table-bordered" id="productsTable">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        // Pagination setup
+                        $limit = 5;  // Items per page
+                        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                        $offset = ($page - 1) * $limit;
+
+                        // Reconnect to the database to fetch products list with pagination
+                        $conn = mysqli_connect($host, $username, $password, $database);
+                        if (!$conn) {
+                            die('Unable to connect to the database. Check your connection parameters.');
+                        }
+
+                        // Query to fetch product records with pagination
+                        $products_query = "SELECT * FROM pharmacy_products LIMIT $limit OFFSET $offset";
+                        $products_result = mysqli_query($conn, $products_query);
+
+                        // Fetch total number of records for pagination
+                        $total_query = "SELECT COUNT(*) AS total FROM pharmacy_products";
+                        $total_result = mysqli_query($conn, $total_query);
+                        $total_row = mysqli_fetch_assoc($total_result);
+                        $total_records = $total_row['total'];
+                        $total_pages = ceil($total_records / $limit);
+
+                        if (mysqli_num_rows($products_result) > 0) {
+                            while ($product = mysqli_fetch_assoc($products_result)) {
+                                // Display product image with proper class and styling
+                                echo "<tr>
+                                        <td><img src='" . $product['image'] . "' alt='Product Image' class='img-fluid' style='max-width: 100px;'></td>
+                                        <td>" . $product['product'] . "</td>
+                                        <td>" . $product['category'] . "</td>
+                                        <td>" . $product['selling_price'] . "</td>
+                                      </tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='4'>No products found</td></tr>";
+                        }
+
+                        // Close the database connection
+                        ?>
+                    </tbody>
+                </table>
+
+                <!-- Pagination Controls -->
+                <div class="d-flex justify-content-start">
+                    <div class="d-flex align-items-center">
+                        <!-- Previous Button -->
+                        <?php if ($page > 1): ?>
+                            <a href="?page=<?= $page - 1 ?>" class="btn btn-secondary btn-sm">Previous</a>
+                        <?php else: ?>
+                            <button class="btn btn-secondary btn-sm" disabled>Previous</button>
+                        <?php endif; ?>
+
+                        <!-- Page Info -->
+                        <span class="ml-3">Page <?= $page ?> of <?= $total_pages ?></span>
+
+                        <!-- Next Button -->
+                        <?php if ($page < $total_pages): ?>
+                            <a href="?page=<?= $page + 1 ?>" class="btn btn-secondary btn-sm ml-3">Next</a>
+                        <?php else: ?>
+                            <button class="btn btn-secondary btn-sm ml-3" disabled>Next</button>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for search functionality -->
+<script>
+    document.getElementById('searchInput1').addEventListener('input', function() {
+        let filter = this.value.toUpperCase();
+        let rows = document.querySelectorAll('#productsTable tbody tr');
+        
+        rows.forEach(function(row) {
+            let cells = row.querySelectorAll('td');
+            let match = false;
+            cells.forEach(function(cell) {
+                // Check if any cell in the row contains the search term
+                if (cell.textContent.toUpperCase().includes(filter)) {
+                    match = true;
+                }
+            });
+            // Show or hide the row based on whether there's a match
+            row.style.display = match ? '' : 'none';
+        });
+    });
+</script>
+
+
 
       <div class="col-xl-3 col-md-6">
-        <div class="card text-white mb-4" style="background-color: #DCC7AA; opacity: 0.9; box-shadow: 0 2px 5px rgba(0, 0, 0, 1.9);">
-            <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖯𝗁𝖺𝗋𝗆𝖺𝖼𝗒 𝖲𝗍𝖺𝖿𝖿</div>
+    <div class="card text-white mb-4" style="background-color: #DCC7AA; opacity: 0.9; box-shadow: 0 2px 5px rgba(0, 0, 0, 1.9);">
+        <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖯𝗁𝖺𝗋𝗆𝖺𝖼𝗒 𝖲𝗍𝖺𝖿𝖿</div>
 
         <?php
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
+        require_once('../connection/dbconfig.php'); 
 
-        $con = mysqli_connect($host, $username, $password, $database);
 
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
-
-        $dash_category_query = "SELECT * from users";
-        $dash_category_query_run = mysqli_query($con, $dash_category_query);
+        // Query to count total pharmacy staff (filter only 'Pharmacy Staff' role)
+        $dash_category_query = "SELECT * FROM users WHERE role = 'Pharmacy Staff'";
+        $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
         if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
-           echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 30px; position: relative;">' . $tblevents_total . ' <i class="fas fa-user-nurse" style="color: black;"></i> </h4>';
-
-
-            echo '<h4 class="mb-0" style="z-index: 2; position: relative;"> </h4>';
+            // Displaying the number of staff
+            echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 30px; position: relative;">' . $tblevents_total . ' <i class="fas fa-user-nurse" style="color: black;"></i></h4>';
+        } else {
+            // Displaying a default icon even if no staff found
+            echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 30px; z-index: 2; position: relative;">' . $tblevents_total . ' <i class="fas fa-user" style="color: black;"></i></h4>';
         }
 
-        mysqli_close($con);
+
         ?>
+
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
-            <a class="small text-white stretched-link" href="ListPatient.php">View Patients</a>
+            <a href="#" class="small text-white" data-toggle="modal" data-target="#staffModal">View Staff</a>
             <div class="small text-white"><i class="fas fa-angle-right"></i></div>
         </div>
     </div>
 </div>
+
+<!-- Staff List Modal -->
+<div class="modal fade" id="staffModal" tabindex="-1" role="dialog" aria-labelledby="staffModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #DCC7AA; color: green;">
+                <h5 class="modal-title" id="staffModalLabel">Pharmacy Staff List</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Search Bar -->
+                <div class="mb-3">
+                    <input type="text" id="searchInput2" class="form-control" placeholder="Search Staff...">
+                </div>
+
+                <!-- Staff Table -->
+                <table class="table table-bordered" id="staffTable">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        // Reconnect to the database to fetch staff list
+                        $conn = mysqli_connect($host, $username, $password, $database);
+                        if (!$conn) {
+                            die('Unable to connect to the database. Check your connection parameters.');
+                        }
+
+                        // Pagination setup
+                        $limit = 5;  // Number of records per page
+                        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                        $offset = ($page - 1) * $limit;
+
+                        // Query to fetch staff records with pagination (only 'Pharmacy Staff' role)
+                        $staff_query = "SELECT * FROM users WHERE role = 'Pharmacy Staff' LIMIT $limit OFFSET $offset";
+                        $staff_result = mysqli_query($conn, $staff_query);
+
+                        if (mysqli_num_rows($staff_result) > 0) {
+                            while ($staff = mysqli_fetch_assoc($staff_result)) {
+                                echo "<tr>
+                                        <td><img src='" . $staff['profile_image'] . "' alt='Staff Image' class='img-fluid' style='max-width: 100px;'></td>
+                                        <td>" . $staff['username'] . "</td>
+                                        <td>" . $staff['role'] . "</td>
+                                        <td>" . $staff['email'] . "</td>
+                                      </tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='4'>No staff members found</td></tr>";
+                        }
+
+                        // Get the total number of staff to calculate the number of pages
+                        $total_staff_query = "SELECT COUNT(*) as total_staff FROM users WHERE role = 'Pharmacy Staff'";
+                        $total_staff_result = mysqli_query($conn, $total_staff_query);
+                        $total_staff = mysqli_fetch_assoc($total_staff_result)['total_staff'];
+                        $total_pages = ceil($total_staff / $limit);
+
+                        // Close the database connection
+                        ?>
+                    </tbody>
+                </table>
+
+                <!-- Pagination Controls -->
+                <nav aria-label="Staff Pagination">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item <?= $page <= 1 ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?= $page - 1; ?>" tabindex="-1">Previous</a>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link">Page <?= $page; ?> of <?= $total_pages; ?></span>
+                        </li>
+                        <li class="page-item <?= $page >= $total_pages ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?= $page + 1; ?>">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for search functionality -->
+<script>
+    document.getElementById('searchInput2').addEventListener('input', function() {
+        let filter = this.value.toUpperCase();
+        let rows = document.querySelectorAll('#staffTable tbody tr');
+        
+        rows.forEach(function(row) {
+            let cells = row.querySelectorAll('td');
+            let match = false;
+            cells.forEach(function(cell) {
+                if (cell.textContent.toUpperCase().includes(filter)) {
+                    match = true;
+                }
+            });
+            row.style.display = match ? '' : 'none';
+        });
+    });
+</script>
+
+
+<!-- JavaScript for search functionality -->
+<script>
+    document.getElementById('searchInput2').addEventListener('input', function() {
+        let filter = this.value.toUpperCase();
+        let rows = document.querySelectorAll('#staffTable tbody tr');
+        
+        rows.forEach(function(row) {
+            let cells = row.querySelectorAll('td');
+            let match = false;
+            cells.forEach(function(cell) {
+                if (cell.textContent.toUpperCase().includes(filter)) {
+                    match = true;
+                }
+            });
+            row.style.display = match ? '' : 'none';
+        });
+    });
+</script>
+
 
        <div class="col-xl-3 col-md-6">
         <div class="card text-white mb-4" style="background-color: #F7882F; opacity: 0.9; box-shadow: 0 2px 5px rgba(0, 0, 0, 1.9);">
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖳𝗈𝖽𝖺𝗒'𝗌 𝖲𝖺𝗅𝖾</div>
 
         <?php
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
+        require_once('../connection/dbconfig.php'); 
 
-        $con = mysqli_connect($host, $username, $password, $database);
-
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
 
         // Get today's date in the format 'YYYY-MM-DD'
         $today = date('Y-m-d');
 
         // Query to sum the total for today's receipts
         $dash_category_query = "SELECT SUM(total) AS today_total FROM receipts WHERE DATE(created_at) = '$today'";
-        $dash_category_query_run = mysqli_query($con, $dash_category_query);
+        $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
         // Fetch the result
         $row = mysqli_fetch_assoc($dash_category_query_run);
@@ -571,57 +897,148 @@ mysqli_close($con);
        echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 30px; position: relative;"> ₱' . number_format($today_total, 2) . ' <i class="fas fa-shopping-cart" style="color: black;"></i></h4>';
 
 
-        mysqli_close($con);
         ?>
 
-        <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
-            <a class="small text-white stretched-link" href="ListPatient.php">View Patients</a>
-            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-        </div>
+        <div style=" text-decoration: ; margin-bottom: 15%;"></div>
     </div>
 </div>
 
   <!-- Repeat for other three columns -->
        <div class="col-xl-3 col-md-6">
-    <div class="card text-white mb-4" style="background-color: #F7882F; opacity: 0.9; box-shadow: 0 2px 5px rgba(0, 0, 0, 1.9);" >
+    <div class="card text-white mb-4" style="background-color: #F7882F; opacity: 0.9; box-shadow: 0 2px 5px rgba(0, 0, 0, 1.9);">
         <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖯𝗁𝖺𝗋𝗆𝖺𝖼𝗒 𝖢𝖺𝗌𝗁𝗂𝖾𝗋</div>
-    
-    <?php
-    // Database connection parameters
-    $host = 'localhost';
-    $username = 'root';
-    $password = '';
-    $database = 'database';
 
-    // Create connection
-    $con = mysqli_connect($host, $username, $password, $database);
+        <?php
+        require_once('../connection/dbconfig.php'); 
 
-    // Check connection
-    if (!$con) {
-        die('Unable to connect to the database. Check your connection parameters.');
-    }
 
-    // Modify the query to select users with the role 'Pharmacy Cashier'
-    $dash_category_query = "SELECT COUNT(*) AS total_cashiers FROM users WHERE role = 'Pharmacy Cashier'";
-    $dash_category_query_run = mysqli_query($con, $dash_category_query);
+        // Query to count total pharmacy cashiers (filter only 'Pharmacy Cashier' role)
+        $dash_category_query = "SELECT * FROM users WHERE role = 'Pharmacy Cashier'";
+        $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
-    if ($result = mysqli_fetch_assoc($dash_category_query_run)) {
-        $total_cashiers = $result['total_cashiers'];
-        echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 30px; position: relative;">' . $total_cashiers . ' <i class="fas fa-cash-register" style="color: black;"></i></h4>';
-    } else {
-        echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Data</h4>';
-    }
+        if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
+            // Displaying the number of cashiers
+            echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 30px; position: relative;">' . $tblevents_total . ' <i class="fas fa-cash-register" style="color: black;"></i></h4>';
+        } else {
+            // Displaying a default icon even if no cashiers found
+            echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 30px; z-index: 2; position: relative;">' . $tblevents_total . ' <i class="fas fa-user" style="color: black;"></i></h4>';
+        }
 
-    // Close the connection
-    mysqli_close($con);
-    ?>
+        // Close the database connection
+        ?>
 
-    <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
-        <a class="small text-white stretched-link" href="ListPatient.php">View Patients</a>
-        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-    </div>
+        <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
+            <a href="#" class="small text-white" data-toggle="modal" data-target="#cashierModal">View Cashiers</a>
+            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+        </div>
     </div>
 </div>
+
+<!-- Cashier List Modal -->
+<div class="modal fade" id="cashierModal" tabindex="-1" role="dialog" aria-labelledby="cashierModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #DCC7AA; color: green;">
+                <h5 class="modal-title" id="cashierModalLabel">Pharmacy Cashier List</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Search Bar -->
+                <div class="mb-3">
+                    <input type="text" id="searchInput3" class="form-control" placeholder="Search Cashier...">
+                </div>
+
+                <!-- Cashier Table -->
+                <table class="table table-bordered" id="cashierTable">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        // Reconnect to the database to fetch cashier list
+                        $conn = mysqli_connect($host, $username, $password, $database);
+                        if (!$conn) {
+                            die('Unable to connect to the database. Check your connection parameters.');
+                        }
+
+                        // Pagination setup
+                        $limit = 5;  // Number of records per page
+                        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                        $offset = ($page - 1) * $limit;
+
+                        // Query to fetch cashier records with pagination (only 'Pharmacy Cashier' role)
+                        $cashier_query = "SELECT * FROM users WHERE role = 'Pharmacy Cashier' LIMIT $limit OFFSET $offset";
+                        $cashier_result = mysqli_query($conn, $cashier_query);
+
+                        if (mysqli_num_rows($cashier_result) > 0) {
+                            while ($cashier = mysqli_fetch_assoc($cashier_result)) {
+                                echo "<tr>
+                                        <td><img src='" . $cashier['profile_image'] . "' alt='Cashier Image' class='img-fluid' style='max-width: 100px;'></td>
+                                        <td>" . $cashier['username'] . "</td>
+                                        <td>" . $cashier['role'] . "</td>
+                                        <td>" . $cashier['email'] . "</td>
+                                      </tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='4'>No cashiers found</td></tr>";
+                        }
+
+                        // Get the total number of cashiers to calculate the number of pages
+                        $total_cashiers_query = "SELECT COUNT(*) as total_cashiers FROM users WHERE role = 'Pharmacy Cashier'";
+                        $total_cashiers_result = mysqli_query($conn, $total_cashiers_query);
+                        $total_cashiers = mysqli_fetch_assoc($total_cashiers_result)['total_cashiers'];
+                        $total_pages = ceil($total_cashiers / $limit);
+
+                        // Close the database connection
+                        ?>
+                    </tbody>
+                </table>
+
+                <!-- Pagination Controls -->
+                <nav aria-label="Cashier Pagination">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item <?= $page <= 1 ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?= $page - 1; ?>" tabindex="-1">Previous</a>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link">Page <?= $page; ?> of <?= $total_pages; ?></span>
+                        </li>
+                        <li class="page-item <?= $page >= $total_pages ? 'disabled' : ''; ?>">
+                            <a class="page-link" href="?page=<?= $page + 1; ?>">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for search functionality -->
+<script>
+    document.getElementById('searchInput3').addEventListener('input', function() {
+        let filter = this.value.toUpperCase();
+        let rows = document.querySelectorAll('#cashierTable tbody tr');
+        
+        rows.forEach(function(row) {
+            let cells = row.querySelectorAll('td');
+            let match = false;
+            cells.forEach(function(cell) {
+                if (cell.textContent.toUpperCase().includes(filter)) {
+                    match = true;
+                }
+            });
+            row.style.display = match ? '' : 'none';
+        });
+    });
+</script>
+
     <div class="col-xl-3 col-md-6">
     <div class="card text-white mb-4" style="background-color: #DCC7AA; opacity: 0.9; box-shadow: 0 2px 5px rgba(0, 0, 0, 1.9);">
        <div class="card-body" style="color: green; font-weight: bold; font-size: 22px; display: flex; justify-content: space-between; align-items: center;">
@@ -630,26 +1047,15 @@ mysqli_close($con);
 </div>
 
     <?php
-    // Database connection parameters
-    $host = 'localhost';
-    $username = 'root';
-    $password = '';
-    $database = 'database';
+   require_once('../connection/dbconfig.php'); 
 
-    // Create connection
-    $con = mysqli_connect($host, $username, $password, $database);
-
-    // Check connection
-    if (!$con) {
-        die('Unable to connect to the database. Check your connection parameters.');
-    }
 
     // Get the current year
     $current_year = date('Y-m-d');
 
     // Query to fetch medicines expired this year and before
     $expired_medicines_query = "SELECT COUNT(*) AS expired_count FROM pharmacy_medicines_products WHERE expiry <= '$current_year'";
-    $expired_medicines_query_run = mysqli_query($con, $expired_medicines_query);
+    $expired_medicines_query_run = mysqli_query($conn, $expired_medicines_query);
     $expired_count = mysqli_fetch_assoc($expired_medicines_query_run)['expired_count'];
 
     // Display the total number of expired medicines
@@ -660,77 +1066,160 @@ mysqli_close($con);
     }
 
     // Close the connection
-    mysqli_close($con);
     ?>
 
-        <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
-            <a class="small text-white stretched-link" href="ListExpiredMedicines.php">View Expired Medicines</a>
-            <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-        </div>
+        <div style=" text-decoration: ; margin-bottom: 15%;"></div>
     </div>
 </div>
     
 
 <div class="col-xl-3 col-md-6">
-    <div class="card text-white mb-4" style="background-color: #F7882F; opacity: 0.9; box-shadow: 0 2px 5px rgba(0, 0, 0, 1.9);" >
-        <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">
-            𝖱𝖾𝖼𝖾𝗂𝗉𝗍𝗌
-        </div>
-    
-    <?php
-    // Database connection parameters
-    $host = 'localhost';
-    $username = 'root';
-    $password = '';
-    $database = 'database';
+    <div class="card text-white mb-4" style="background-color: #F7882F; opacity: 0.9; box-shadow: 0 2px 5px rgba(0, 0, 0, 1.9);">
+        <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖱𝖾𝖼𝖾𝗂𝗉𝗍𝗌</div>
+        
+        <?php
+        require_once('../connection/dbconfig.php'); 
 
-    // Create connection
-    $con = mysqli_connect($host, $username, $password, $database);
 
-    // Check connection
-    if (!$con) {
-        die('Unable to connect to the database. Check your connection parameters.');
-    }
+        $dash_receipt_query = "SELECT * from receipts"; // Change this to the appropriate table for receipts
+        $dash_receipt_query_run = mysqli_query($conn, $dash_receipt_query);
 
-    // Query to count the total number of receipts
-    $receipts_query = "SELECT COUNT(*) AS total_receipts FROM receipts";
-    $receipts_query_run = mysqli_query($con, $receipts_query);
-    $receipts_count = mysqli_fetch_assoc($receipts_query_run)['total_receipts'];
+        if ($tblevents_total = mysqli_num_rows($dash_receipt_query_run)) {
+            echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 30px; z-index: 2; position: relative;">' . $tblevents_total . '  <i class="fas fa-receipt" style="color: black;"></i></h4>';
+        } else {
+            echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Receipts</h4>';
+        }
 
-    // Display the total number of receipts
-    if ($receipts_count) {
-        echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 30px; position: relative;">' . $receipts_count . ' <i class="fas fa-receipt" style="color: black;"></i></h4>';
-    } else {
-        echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Data</h4>';
-    }
-
-    // Close the connection
-    mysqli_close($con);
-    ?>
-
+        ?>
+        
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
-            <a class="small text-white stretched-link" href="ListReceipts.php">View Receipts</a>
+            <a href="#" class="small text-white" data-toggle="modal" data-target="#receiptsModal">View Receipts</a>
             <div class="small text-white"><i class="fas fa-angle-right"></i></div>
         </div>
     </div>
 </div>
 
+<!-- Receipts List Modal -->
+<div class="modal fade" id="receiptsModal" tabindex="-1" role="dialog" aria-labelledby="receiptsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #DCC7AA; color: green;">
+                <h5 class="modal-title" id="receiptsModalLabel">Receipts List</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Search Bar -->
+                <div class="mb-3">
+                    <input type="text" id="searchInput5" class="form-control" placeholder="Search by POS Number...">
+                </div>
+                
+                <!-- Receipts Table -->
+                <table class="table table-bordered" id="receiptsTable">
+                    <thead>
+                        <tr>
+                            <th>POS Number</th>
+                            <th>Total</th>
+                            <th>Paid Amount</th>
+                            <th>Change Amount</th>
+                            <th>Discount Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        // Pagination setup
+                        $limit = 5;  // Items per page
+                        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                        $offset = ($page - 1) * $limit;
+
+                        // Reconnect to the database to fetch receipts list with pagination
+                        $conn = mysqli_connect($host, $username, $password, $database);
+                        if (!$conn) {
+                            die('Unable to connect to the database. Check your connection parameters.');
+                        }
+
+                        // Query to fetch receipt data with pagination
+                        $receipts_query = "SELECT * FROM receipts LIMIT $limit OFFSET $offset"; // Modify to match your table name and fields
+                        $receipts_result = mysqli_query($conn, $receipts_query);
+
+                        // Fetch total number of records for pagination
+                        $total_query = "SELECT COUNT(*) AS total FROM receipts";
+                        $total_result = mysqli_query($conn, $total_query);
+                        $total_row = mysqli_fetch_assoc($total_result);
+                        $total_records = $total_row['total'];
+                        $total_pages = ceil($total_records / $limit);
+
+                        if (mysqli_num_rows($receipts_result) > 0) {
+                            while ($receipt = mysqli_fetch_assoc($receipts_result)) {
+                                echo "<tr>
+                                        <td>" . $receipt['pos_number'] . "</td>
+                                        <td>" . $receipt['total'] . "</td>
+                                        <td>" . $receipt['paid_amount'] . "</td>
+                                        <td>" . $receipt['change_amount'] . "</td>
+                                        <td>" . $receipt['discount_amount'] . "</td>
+                                      </tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='5'>No receipts found</td></tr>";
+                        }
+
+                        ?>
+                    </tbody>
+                </table>
+
+                <!-- Pagination Controls -->
+                <div class="d-flex justify-content-start">
+                    <div class="d-flex align-items-center">
+                        <!-- Previous Button -->
+                        <?php if ($page > 1): ?>
+                            <a href="?page=<?= $page - 1 ?>" class="btn btn-secondary btn-sm">Previous</a>
+                        <?php else: ?>
+                            <button class="btn btn-secondary btn-sm" disabled>Previous</button>
+                        <?php endif; ?>
+
+                        <!-- Page Info -->
+                        <span class="ml-3">Page <?= $page ?> of <?= $total_pages ?></span>
+
+                        <!-- Next Button -->
+                        <?php if ($page < $total_pages): ?>
+                            <a href="?page=<?= $page + 1 ?>" class="btn btn-secondary btn-sm ml-3">Next</a>
+                        <?php else: ?>
+                            <button class="btn btn-secondary btn-sm ml-3" disabled>Next</button>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- JavaScript for search functionality -->
+<script>
+    document.getElementById('searchInput5').addEventListener('input', function() {
+        let filter = this.value.toUpperCase();
+        let rows = document.querySelectorAll('#receiptsTable tbody tr');
+        
+        rows.forEach(function(row) {
+            let posNumberCell = row.querySelector('td:first-child'); // Get POS Number cell
+            let match = false;
+            if (posNumberCell && posNumberCell.textContent.toUpperCase().includes(filter)) {
+                match = true;
+            }
+            row.style.display = match ? '' : 'none';
+        });
+    });
+</script>
+
+
+ 
+</div>
+
 <div class="first1" style="opacity: 0.9; border-top: 2px solid #b2babb;"></div>
     <?php
-// Database connection parameters
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';
+require_once('../connection/dbconfig.php'); 
 
-// Establish the connection
-$con = mysqli_connect($host, $username, $password, $database);
-
-// Check the connection
-if (!$con) {
-    die('Unable to connect to the database. Check your connection parameters.');
-}
 
 // Initialize arrays to store low stock items
 $low_stock_medicines = [];
@@ -738,7 +1227,7 @@ $low_stock_products = [];
 
 // Query to get low stock items from pharmacy_medicines_products where remain_quantity <= 15
 $low_stock_query_medicines = "SELECT medicine_product AS product, remain_quantity AS quantity FROM pharmacy_medicines_products WHERE CAST(remain_quantity AS UNSIGNED) <= 15";
-$low_stock_query_run_medicines = mysqli_query($con, $low_stock_query_medicines);
+$low_stock_query_run_medicines = mysqli_query($conn, $low_stock_query_medicines);
 
 // Fetch low stock items from pharmacy_medicines_products
 while ($row = mysqli_fetch_assoc($low_stock_query_run_medicines)) {
@@ -750,7 +1239,7 @@ while ($row = mysqli_fetch_assoc($low_stock_query_run_medicines)) {
 
 // Query to get low stock items from pharmacy_products where remaining_quantity <= 15
 $low_stock_query_products = "SELECT product, remaining_quantity AS quantity FROM pharmacy_products WHERE remaining_quantity <= 15";
-$low_stock_query_run_products = mysqli_query($con, $low_stock_query_products);
+$low_stock_query_run_products = mysqli_query($conn, $low_stock_query_products);
 
 // Fetch low stock items from pharmacy_products
 while ($row = mysqli_fetch_assoc($low_stock_query_run_products)) {
@@ -760,8 +1249,7 @@ while ($row = mysqli_fetch_assoc($low_stock_query_run_products)) {
     ];
 }
 
-// Close the database connection after all queries
-mysqli_close($con);
+
 ?>
 
 <div class="container mt-5" style="border-top: blue;">
@@ -872,21 +1360,12 @@ mysqli_close($con);
     </div>
 </div>
 <?php
-// PHP code to fetch monthly sales data
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';
+require_once('../connection/dbconfig.php'); 
 
-$con = mysqli_connect($host, $username, $password, $database);
-
-if (!$con) {
-    die('Unable to connect to the database. Check your connection parameters.');
-}
 
 // Query to get total sales grouped by month
 $sales_query = "SELECT SUM(total) AS monthly_total, MONTH(created_at) AS month FROM receipts WHERE YEAR(created_at) = YEAR(CURDATE()) GROUP BY MONTH(created_at)";
-$sales_query_run = mysqli_query($con, $sales_query);
+$sales_query_run = mysqli_query($conn, $sales_query);
 
 // Initialize an array to store monthly sales
 $sales_data = array_fill(0, 12, 0); // Default 12 months with 0 sales
@@ -898,7 +1377,7 @@ while ($row = mysqli_fetch_assoc($sales_query_run)) {
 
 // Query to fetch expired medicines from the current year
 $expiry_query = "SELECT medicine_product, expiry FROM pharmacy_medicines_products WHERE YEAR(expiry) = YEAR(CURDATE()) AND expiry < CURDATE()";
-$expiry_query_run = mysqli_query($con, $expiry_query);
+$expiry_query_run = mysqli_query($conn, $expiry_query);
 
 // Initialize an array to store expired medicines
 $expired_medicines = [];
@@ -909,7 +1388,6 @@ while ($row = mysqli_fetch_assoc($expiry_query_run)) {
 // Pass the sales data as a JSON array to JavaScript
 echo '<script>var monthlySales = ' . json_encode($sales_data) . ';</script>';
 
-mysqli_close($con);
 ?>
 <div class="container mt-5">
     <div class="row">

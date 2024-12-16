@@ -3,19 +3,9 @@
 session_name('PharmacyCashierSession'); // Use the same session name as when the user logged in
 session_start(); // Start session
 
-// Replace with actual database connection details
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "database";
+require_once('../connection/dbconfig.php'); 
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Check if user is logged in and retrieve user_id
 if (!isset($_SESSION['user_id'])) { // Ensure user_id is stored in the session

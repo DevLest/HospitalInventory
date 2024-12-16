@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_name('GastroenterologySession'); // Set the session name only if no session exists
     session_start(); // Start the session only if not already active
 }
+require_once('../connection/dbconfig.php'); 
 
 // Validate session variables for authorized access
 if (!isset($_SESSION['doctor_id']) || $_SESSION['specialties'] !== 'Gastroenterology') {
@@ -107,18 +108,8 @@ if (!isset($_SESSION['doctor_id']) || $_SESSION['specialties'] !== 'Gastroentero
 </div>
 <div class="first1" style="opacity: 0.9; border-top: 2px solid #b2babb; margin-top: -20px;"></div><br>
 <?php
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "database"; // Change this to your database name
+require_once('../connection/dbconfig.php'); 
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check the connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Check if the user is logged in and is a Gastroenterology doctor
 if (!isset($_SESSION['doctor_id']) || $_SESSION['specialties'] != 'Gastroenterology') {

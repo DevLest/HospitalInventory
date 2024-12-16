@@ -1,6 +1,7 @@
 <?php
 session_name('ChiefAdminSession');
 session_start();
+require_once('../connection/dbconfig.php'); 
 
 // Check if the Chief Admin is logged in
 if (!isset($_SESSION['chief_admin_id'])) {
@@ -116,17 +117,7 @@ echo "Welcome, " . $_SESSION['chief_admin_username'];
 
 <body>
 <?php
-// Database connection
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';
-
-$con = mysqli_connect($host, $username, $password, $database);
-
-if (!$con) {
-    die('Unable to connect to the database. Check your connection parameters.');
-}
+require_once('../connection/dbconfig.php'); 
 
 // Query to fetch low stock items from both tables
 $low_stock_query = "
@@ -139,7 +130,7 @@ $low_stock_query = "
     WHERE remaining_quantity < 15
 ";
 
-$low_stock_query_run = mysqli_query($con, $low_stock_query);
+$low_stock_query_run = mysqli_query($conn, $low_stock_query);
 
 // Initialize an array to store low stock data and count items
 $low_stock_data = [];
@@ -153,7 +144,6 @@ while ($row = mysqli_fetch_assoc($low_stock_query_run)) {
 // Pass low stock count to JavaScript for the badge
 echo '<script>var lowStockCount = ' . json_encode($total_low_stock_items) . ';</script>';
 
-mysqli_close($con);
 ?>
 
 
@@ -344,19 +334,11 @@ mysqli_close($con);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖬𝖾𝖽𝗂𝖼𝗂𝗇𝖾𝗌</div>
         
         <?php
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
+        require_once('../connection/dbconfig.php'); 
 
-        $con = mysqli_connect($host, $username, $password, $database);
-
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
 
         $dash_category_query = "SELECT * from pharmacy_medicines_products";
-        $dash_category_query_run = mysqli_query($con, $dash_category_query);
+        $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
         if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 30px; z-index: 2; position: relative;">' . $tblevents_total . '  <i class="fas fa-capsules" style="color: black;"></i></h4>';
@@ -364,7 +346,6 @@ mysqli_close($con);
             echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Data</h4>';
         }
 
-        mysqli_close($con);
         ?>
         
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
@@ -381,19 +362,11 @@ mysqli_close($con);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖯𝗋𝗈𝖽𝗎𝖼𝗍𝗌</div>
         
         <?php
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
+        require_once('../connection/dbconfig.php'); 
 
-        $con = mysqli_connect($host, $username, $password, $database);
-
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
 
         $dash_category_query = "SELECT * from pharmacy_products";
-        $dash_category_query_run = mysqli_query($con, $dash_category_query);
+        $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
         if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 30px; z-index: 2; position: relative;">' . $tblevents_total . ' <i class="fas fa-box" style="color: black;"></i></h4>';
@@ -402,7 +375,6 @@ mysqli_close($con);
             echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Data</h4>';
         }
 
-        mysqli_close($con);
         ?>
 
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
@@ -421,26 +393,15 @@ mysqli_close($con);
 </div>
 
     <?php
-    // Database connection parameters
-    $host = 'localhost';
-    $username = 'root';
-    $password = '';
-    $database = 'database';
+    require_once('../connection/dbconfig.php'); 
 
-    // Create connection
-    $con = mysqli_connect($host, $username, $password, $database);
-
-    // Check connection
-    if (!$con) {
-        die('Unable to connect to the database. Check your connection parameters.');
-    }
 
     // Get the current year
     $current_year = date('Y-m-d');
 
     // Query to fetch medicines expired this year and before
     $expired_medicines_query = "SELECT COUNT(*) AS expired_count FROM pharmacy_medicines_products WHERE expiry <= '$current_year'";
-    $expired_medicines_query_run = mysqli_query($con, $expired_medicines_query);
+    $expired_medicines_query_run = mysqli_query($conn, $expired_medicines_query);
     $expired_count = mysqli_fetch_assoc($expired_medicines_query_run)['expired_count'];
 
     // Display the total number of expired medicines
@@ -451,7 +412,6 @@ mysqli_close($con);
     }
 
     // Close the connection
-    mysqli_close($con);
     ?>
 
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
@@ -465,23 +425,12 @@ mysqli_close($con);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖯𝗁𝖺𝗋𝗆𝖺𝖼𝗒 𝖲𝗍𝖺𝖿𝖿</div>
 
         <?php
-    // Database connection parameters
-    $host = 'localhost';
-    $username = 'root';
-    $password = '';
-    $database = 'database';
+    require_once('../connection/dbconfig.php'); 
 
-    // Create connection
-    $con = mysqli_connect($host, $username, $password, $database);
-
-    // Check connection
-    if (!$con) {
-        die('Unable to connect to the database. Check your connection parameters.');
-    }
 
     // Modify the query to select users with the role 'Pharmacy Cashier'
     $dash_category_query = "SELECT COUNT(*) AS total_staff FROM users WHERE role = 'Pharmacy Staff'";
-    $dash_category_query_run = mysqli_query($con, $dash_category_query);
+    $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
     if ($result = mysqli_fetch_assoc($dash_category_query_run)) {
         $total_staff = $result['total_staff'];
@@ -491,7 +440,6 @@ mysqli_close($con);
     }
 
     // Close the connection
-    mysqli_close($con);
     ?>
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
             <a class="small text-white stretched-link" href="ListPatient.php">View Patients</a>
@@ -504,23 +452,12 @@ mysqli_close($con);
         <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖯𝗁𝖺𝗋𝗆𝖺𝖼𝗒 𝖢𝖺𝗌𝗁𝗂𝖾𝗋</div>
     
     <?php
-    // Database connection parameters
-    $host = 'localhost';
-    $username = 'root';
-    $password = '';
-    $database = 'database';
+    require_once('../connection/dbconfig.php'); 
 
-    // Create connection
-    $con = mysqli_connect($host, $username, $password, $database);
-
-    // Check connection
-    if (!$con) {
-        die('Unable to connect to the database. Check your connection parameters.');
-    }
 
     // Modify the query to select users with the role 'Pharmacy Cashier'
     $dash_category_query = "SELECT COUNT(*) AS total_cashiers FROM users WHERE role = 'Pharmacy Cashier'";
-    $dash_category_query_run = mysqli_query($con, $dash_category_query);
+    $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
     if ($result = mysqli_fetch_assoc($dash_category_query_run)) {
         $total_cashiers = $result['total_cashiers'];
@@ -530,7 +467,6 @@ mysqli_close($con);
     }
 
     // Close the connection
-    mysqli_close($con);
     ?>
 
     <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
@@ -544,23 +480,12 @@ mysqli_close($con);
         <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖯𝗁𝖺𝗋𝗆𝖺𝖼𝗒 Admin</div>
     
     <?php
-    // Database connection parameters
-    $host = 'localhost';
-    $username = 'root';
-    $password = '';
-    $database = 'database';
+    require_once('../connection/dbconfig.php'); 
 
-    // Create connection
-    $con = mysqli_connect($host, $username, $password, $database);
-
-    // Check connection
-    if (!$con) {
-        die('Unable to connect to the database. Check your connection parameters.');
-    }
 
     // Modify the query to select users with the role 'Pharmacy Cashier'
     $dash_category_query = "SELECT COUNT(*) AS total_cashiers FROM users WHERE role = 'Pharmacy Admin'";
-    $dash_category_query_run = mysqli_query($con, $dash_category_query);
+    $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
     if ($result = mysqli_fetch_assoc($dash_category_query_run)) {
         $total_cashiers = $result['total_cashiers'];
@@ -570,7 +495,6 @@ mysqli_close($con);
     }
 
     // Close the connection
-    mysqli_close($con);
     ?>
 
     <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
@@ -584,19 +508,11 @@ mysqli_close($con);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">Doctors</div>
         
         <?php
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
+        require_once('../connection/dbconfig.php'); 
 
-        $con = mysqli_connect($host, $username, $password, $database);
-
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
 
         $dash_category_query = "SELECT * from doctors";
-        $dash_category_query_run = mysqli_query($con, $dash_category_query);
+        $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
         if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 30px; position: relative;">' . $tblevents_total . ' <i class="fas fa-user" style="color: black;"></i></h4>';
@@ -604,7 +520,6 @@ mysqli_close($con);
             echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Data</h4>';
         }
 
-        mysqli_close($con);
         ?>
 
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
@@ -618,23 +533,11 @@ mysqli_close($con);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">Wards</div>
         
         <?php
-    // Database connection parameters
-    $host = 'localhost';
-    $username = 'root';
-    $password = '';
-    $database = 'database';
-
-    // Create connection
-    $con = mysqli_connect($host, $username, $password, $database);
-
-    // Check connection
-    if (!$con) {
-        die('Unable to connect to the database. Check your connection parameters.');
-    }
+    require_once('../connection/dbconfig.php'); 
 
     // Modify the query to select users with the role 'Pharmacy Cashier'
     $dash_category_query = "SELECT COUNT(*) AS total_wards FROM users WHERE role = 'Wards'";
-    $dash_category_query_run = mysqli_query($con, $dash_category_query);
+    $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
     if ($result = mysqli_fetch_assoc($dash_category_query_run)) {
         $total_wards = $result['total_wards'];
@@ -644,7 +547,6 @@ mysqli_close($con);
     }
 
     // Close the connection
-    mysqli_close($con);
     ?>
 
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
@@ -661,23 +563,12 @@ mysqli_close($con);
         </div>
     
     <?php
-    // Database connection parameters
-    $host = 'localhost';
-    $username = 'root';
-    $password = '';
-    $database = 'database';
+    require_once('../connection/dbconfig.php'); 
 
-    // Create connection
-    $con = mysqli_connect($host, $username, $password, $database);
-
-    // Check connection
-    if (!$con) {
-        die('Unable to connect to the database. Check your connection parameters.');
-    }
 
     // Query to count the total number of receipts
     $receipts_query = "SELECT COUNT(*) AS total_receipts FROM receipts";
-    $receipts_query_run = mysqli_query($con, $receipts_query);
+    $receipts_query_run = mysqli_query($conn, $receipts_query);
     $receipts_count = mysqli_fetch_assoc($receipts_query_run)['total_receipts'];
 
     // Display the total number of receipts
@@ -688,7 +579,6 @@ mysqli_close($con);
     }
 
     // Close the connection
-    mysqli_close($con);
     ?>
 
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
@@ -703,19 +593,11 @@ mysqli_close($con);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">Patients</div>
         
         <?php
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
+        require_once('../connection/dbconfig.php'); 
 
-        $con = mysqli_connect($host, $username, $password, $database);
-
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
 
         $dash_category_query = "SELECT * from patient";
-        $dash_category_query_run = mysqli_query($con, $dash_category_query);
+        $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
         if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 30px; position: relative;">' . $tblevents_total . ' <i class="fas fa-user" style="color: black;"></i></h4>';
@@ -723,7 +605,6 @@ mysqli_close($con);
             echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Data</h4>';
         }
 
-        mysqli_close($con);
         ?>
 
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
@@ -737,19 +618,10 @@ mysqli_close($con);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">Admitted Patients</div>
         
         <?php
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
-
-        $con = mysqli_connect($host, $username, $password, $database);
-
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
+       require_once('../connection/dbconfig.php'); 
 
         $dash_category_query = "SELECT * from admissionpatient";
-        $dash_category_query_run = mysqli_query($con, $dash_category_query);
+        $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
         if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 30px; position: relative;">' . $tblevents_total . ' <i class="fas fa-user" style="color: black;"></i></h4>';
@@ -757,7 +629,6 @@ mysqli_close($con);
             echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Data</h4>';
         }
 
-        mysqli_close($con);
         ?>
 
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
@@ -771,23 +642,12 @@ mysqli_close($con);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">ER Nurse</div>
         
         <?php
-    // Database connection parameters
-    $host = 'localhost';
-    $username = 'root';
-    $password = '';
-    $database = 'database';
+    require_once('../connection/dbconfig.php'); 
 
-    // Create connection
-    $con = mysqli_connect($host, $username, $password, $database);
-
-    // Check connection
-    if (!$con) {
-        die('Unable to connect to the database. Check your connection parameters.');
-    }
 
     // Modify the query to select users with the role 'Pharmacy Cashier'
     $dash_category_query = "SELECT COUNT(*) AS total_nurse FROM users WHERE role = 'Er Nurse'";
-    $dash_category_query_run = mysqli_query($con, $dash_category_query);
+    $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
     if ($result = mysqli_fetch_assoc($dash_category_query_run)) {
         $total_nurse = $result['total_nurse'];
@@ -797,7 +657,6 @@ mysqli_close($con);
     }
 
     // Close the connection
-    mysqli_close($con);
     ?>
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
             <a class="small text-white stretched-link" href="ListPatient.php">View Patients</a>
@@ -810,19 +669,11 @@ mysqli_close($con);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">ER Patient</div>
         
         <?php
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
+        require_once('../connection/dbconfig.php'); 
 
-        $con = mysqli_connect($host, $username, $password, $database);
-
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
 
         $dash_category_query = "SELECT * from er_patient";
-        $dash_category_query_run = mysqli_query($con, $dash_category_query);
+        $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
         if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 30px; position: relative;">' . $tblevents_total . ' <i class="fas fa-user" style="color: black;"></i></h4>';
@@ -830,7 +681,6 @@ mysqli_close($con);
             echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Data</h4>';
         }
 
-        mysqli_close($con);
         ?>
 
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
@@ -852,21 +702,12 @@ mysqli_close($con);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖳𝗈𝖽𝖺𝗒'𝗌 𝖲𝖺𝗅𝖾</div>
 
         <?php
-            // Database connection
-            $host = 'localhost';
-            $username = 'root';
-            $password = '';
-            $database = 'database';
-            
-            $con = mysqli_connect($host, $username, $password, $database);
-            
-            if (!$con) {
-                die('Unable to connect to the database. Check your connection parameters.');
-            }
+           require_once('../connection/dbconfig.php'); 
+
             
             // Query to sum today's total sales
             $today_query = "SELECT SUM(total) as total_sales FROM receipts WHERE DATE(created_at) = CURDATE()";
-            $today_result = mysqli_query($con, $today_query);
+            $today_result = mysqli_query($conn, $today_query);
             $today_sales = mysqli_fetch_assoc($today_result)['total_sales'] ?? 0;
             
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 30px;"> ₱ ' . number_format($today_sales, 2) . ' </h4>';
@@ -881,16 +722,8 @@ mysqli_close($con);
         <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">Weekly Income</div>
         
         <?php
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
+        require_once('../connection/dbconfig.php'); 
 
-        $con = mysqli_connect($host, $username, $password, $database);
-
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
 
         // Query to calculate weekly income (last 7 days)
         $weekly_income_query = "
@@ -898,7 +731,7 @@ mysqli_close($con);
             FROM receipts 
             WHERE created_at >= DATE_SUB(CURRENT_DATE, INTERVAL 7 DAY)
         ";
-        $result = mysqli_query($con, $weekly_income_query);
+        $result = mysqli_query($conn, $weekly_income_query);
 
         if ($row = mysqli_fetch_assoc($result)) {
             $weekly_income = $row['weekly_income'] ? $row['weekly_income'] : 0;
@@ -907,7 +740,6 @@ mysqli_close($con);
             echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Data</h4>';
         }
 
-        mysqli_close($con);
         ?>
 
         <div style="margin-bottom: 12.5%;">
@@ -919,16 +751,7 @@ mysqli_close($con);
         <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">Monthly Income</div>
         
         <?php
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
-
-        $con = mysqli_connect($host, $username, $password, $database);
-
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
+        require_once('../connection/dbconfig.php'); 
 
         // Query to calculate monthly total
         $monthly_total_query = "
@@ -937,7 +760,7 @@ mysqli_close($con);
             WHERE YEAR(created_at) = YEAR(CURRENT_DATE) 
               AND MONTH(created_at) = MONTH(CURRENT_DATE)
         ";
-        $result = mysqli_query($con, $monthly_total_query);
+        $result = mysqli_query($conn, $monthly_total_query);
 
         if ($row = mysqli_fetch_assoc($result)) {
             $monthly_total = $row['monthly_total'] ? $row['monthly_total'] : 0;
@@ -946,7 +769,6 @@ mysqli_close($con);
             echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Data</h4>';
         }
 
-        mysqli_close($con);
         ?>
 
         <div style="margin-bottom: 12.5%;">
@@ -958,16 +780,8 @@ mysqli_close($con);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">Yearly Sales</div>
         
         <?php
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
+        require_once('../connection/dbconfig.php'); 
 
-        $con = mysqli_connect($host, $username, $password, $database);
-
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
 
         // Query to calculate today's total
         $todays_total_query = "
@@ -975,7 +789,7 @@ mysqli_close($con);
             FROM receipts 
             WHERE DATE(created_at) = CURDATE()
         ";
-        $result = mysqli_query($con, $todays_total_query);
+        $result = mysqli_query($conn, $todays_total_query);
 
         if ($row = mysqli_fetch_assoc($result)) {
             $todays_total = $row['todays_total'] ? $row['todays_total'] : 0;
@@ -984,7 +798,6 @@ mysqli_close($con);
             echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Data</h4>';
         }
 
-        mysqli_close($con);
         ?>
 
         <div style="margin-bottom: 12.5%;">
@@ -993,17 +806,7 @@ mysqli_close($con);
 </div>
 </div>
 <?php
-// Database connection
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';
-
-$con = mysqli_connect($host, $username, $password, $database);
-
-if (!$con) {
-    die('Unable to connect to the database. Check your connection parameters.');
-}
+require_once('../connection/dbconfig.php'); 
 
 // Queries for sales totals
 $sales_query = "SELECT 
@@ -1024,7 +827,7 @@ $sales_totals = [
     'Yearly' => 0,
 ];
 
-$sales_result = mysqli_query($con, $sales_query);
+$sales_result = mysqli_query($conn, $sales_query);
 while ($row = mysqli_fetch_assoc($sales_result)) {
     $sales_totals[$row['period']] = $row['total'];
 }
@@ -1034,15 +837,14 @@ $monthly_sales_query = "SELECT SUM(total) AS monthly_total, MONTH(created_at) AS
     FROM receipts 
     WHERE YEAR(created_at) = YEAR(CURDATE()) 
     GROUP BY MONTH(created_at)";
-$monthly_sales_result = mysqli_query($con, $monthly_sales_query);
+$monthly_sales_result = mysqli_query($conn, $monthly_sales_query);
 
 $monthly_sales = array_fill(0, 12, 0);
 while ($row = mysqli_fetch_assoc($monthly_sales_result)) {
     $monthly_sales[(int)$row['month'] - 1] = $row['monthly_total'];
 }
 
-// Close the database connection
-mysqli_close($con);
+
 
 // Pass data to JavaScript
 echo '<script>
@@ -1145,23 +947,12 @@ echo '<script>
         <div class="col-xl-6">
             <div class="card">
                 <?php
-                // Database connection parameters
-                $host = 'localhost';
-                $username = 'root';
-                $password = '';
-                $database = 'database';
+                require_once('../connection/dbconfig.php'); 
 
-                // Connect to the database
-                $con = mysqli_connect($host, $username, $password, $database);
-
-                // Check connection
-                if (!$con) {
-                    die('Unable to connect to the database. Check your connection parameters.');
-                }
 
                 // Query to fetch all dates from your table
                 $query = "SELECT date FROM patient";
-                $result = mysqli_query($con, $query);
+                $result = mysqli_query($conn, $query);
 
                 // Initialize an array to store the count of patients for each month
                 $monthlyCounts = array_fill(1, 12, 0);
@@ -1173,8 +964,6 @@ echo '<script>
                     $monthlyCounts[$month]++;
                 }
 
-                // Close the database connection
-                mysqli_close($con);
 
                 // Prepare data for the bar chart
                 $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -1237,8 +1026,8 @@ echo '<script>
         <div class="col-xl-6">
             <div class="card">
                 <?php
-                // Database connection
-                $conn = mysqli_connect("localhost", "root", "", "database");
+                require_once('../connection/dbconfig.php'); 
+;
 
                 // Fetch search term and pagination parameters
                 $search = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';

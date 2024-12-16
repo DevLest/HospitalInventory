@@ -1,16 +1,6 @@
 <?php
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "database"; // Change this to your database name
+require_once('../connection/dbconfig.php'); 
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check the connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Get data from the form
 $date = $_POST['date'];

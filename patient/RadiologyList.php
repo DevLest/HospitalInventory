@@ -301,17 +301,8 @@ button:hover {
 
     
 <?php
-// Database connection
-$host = 'localhost';
-$user = 'root';
-$password = '';
-$dbname = 'database'; // Replace with your actual database name
+require_once('../connection/dbconfig.php'); 
 
-$conn = new mysqli($host, $user, $password, $dbname);
-
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
 
 // Get specialty of the logged-in doctor (e.g., Cardiology)
 $specialty = 'Radiology'; // Change this to dynamically fetch from session if needed

@@ -5,19 +5,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $status = $_POST['status'];
     // ... other form data
 
-    // Database connection credentials
-    $servername = "localhost";
-    $username = "root"; // Replace with your actual database username
-    $password = ""; // Replace with your actual database password
-    $dbname = "data"; // Replace with your actual database name
+    require_once('../connection/dbconfig.php'); 
 
-    // Create a connection
-    $connection = new mysqli($servername, $username, $password, $dbname);
-
-    // Check connection
-    if ($connection->connect_error) {
-        die("Connection failed: " . $connection->connect_error);
-    }
 
     $sql = "UPDATE admissionpatient SET status = ? WHERE admission_id = ?";
     $stmt = $connection->prepare($sql);

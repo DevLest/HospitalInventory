@@ -1,6 +1,7 @@
 <?php
 session_name('PediatriciansSession');  // Ensure session name matches the one set during login
 session_start();  // Start session
+require_once('../connection/dbconfig.php'); 
 
 // Check if the user is logged in and is a Pediatricians doctor
 if (!isset($_SESSION['doctor_id']) || $_SESSION['specialties'] != 'Pediatricians') {
@@ -319,16 +320,7 @@ button:hover {
         <div class="card text-white mb-4" style="background-color: #DCC7AA; opacity: 0.9; box-shadow: 0 2px 5px rgba(0, 0, 0, 1.9);" >
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">Appointment Today</div>
              <?php
-                $host = 'localhost';
-                $username = 'root';
-                $password = '';
-                $database = 'database';
-
-                $con = mysqli_connect($host, $username, $password, $database);
-
-                if (!$con) {
-                    die('Unable to connect to the database. Check your connection parameters.');
-                }
+                require_once('../connection/dbconfig.php'); 
 
                 // Define the specialty you want to filter by (e.g., Pediatricians)
                 $specialty = 'Pediatricians';  // Example specialty
@@ -341,7 +333,7 @@ button:hover {
                     WHERE d.specialties = '$specialty'
                 ";
 
-                $dash_category_query_run = mysqli_query($con, $dash_category_query);
+                $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
                 if ($appointments_total = mysqli_num_rows($dash_category_query_run)) {
                     echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 25px; position: relative;">' . $appointments_total . ' <i class="fas fa-calendar-day" style="color: black;"></i></h4>';
@@ -351,7 +343,6 @@ button:hover {
                     echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Data for Pediatricians</h4>';
                 }
 
-                mysqli_close($con);
                 ?>
 
     </div>
@@ -364,47 +355,38 @@ button:hover {
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">Appointment Pending</div>
         
         <?php
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';
+            require_once('../connection/dbconfig.php'); 
 
-$con = mysqli_connect($host, $username, $password, $database);
 
-if (!$con) {
-    die('Unable to connect to the database. Check your connection parameters.');
-}
+            // Define the specialty you want to filter by (e.g., Pediatricians)
+            $specialty = 'Pediatricians';  // Example specialty
 
-// Define the specialty you want to filter by (e.g., Pediatricians)
-$specialty = 'Pediatricians';  // Example specialty
+            // Query to fetch all pending appointments for doctors with the "Pediatricians" specialty
+            $pending_appointments_query = "
+                SELECT COUNT(a.appointment_id) AS pending_count 
+                FROM appointments a
+                JOIN doctors d ON a.doctor_id = d.doctor_id
+                WHERE d.specialties = '$specialty' 
+                AND a.status = 'Pending'
+            ";
 
-// Query to fetch all pending appointments for doctors with the "Pediatricians" specialty
-$pending_appointments_query = "
-    SELECT COUNT(a.appointment_id) AS pending_count 
-    FROM appointments a
-    JOIN doctors d ON a.doctor_id = d.doctor_id
-    WHERE d.specialties = '$specialty' 
-    AND a.status = 'Pending'
-";
+            $pending_appointments_query_run = mysqli_query($conn, $pending_appointments_query);
 
-$pending_appointments_query_run = mysqli_query($con, $pending_appointments_query);
+            if ($pending_appointments_query_run) {
+                // Fetch the count of pending appointments
+                $row = mysqli_fetch_assoc($pending_appointments_query_run);
+                $pending_appointments_total = $row['pending_count'];  // Get the count of pending appointments
 
-if ($pending_appointments_query_run) {
-    // Fetch the count of pending appointments
-    $row = mysqli_fetch_assoc($pending_appointments_query_run);
-    $pending_appointments_total = $row['pending_count'];  // Get the count of pending appointments
+                if ($pending_appointments_total > 0) {
+                    echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 25px; position: relative;">
+                            ' . $pending_appointments_total . ' <i class="fas fa-calendar-hourglass" style="color: black;"></i>
+                          </h4>';
+                } else {
+                    echo '<h4 class="mb-0" style="z-index: 2; position: relative; color: black; ">𝖭𝗈 𝖯𝖾𝗇𝖽𝗂𝗇𝗀 𝖠𝗉𝗉𝗈𝗂𝗇𝗍𝗆𝖾𝗇𝗍𝗌</h4>';
+                }
+            } 
 
-    if ($pending_appointments_total > 0) {
-        echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 25px; position: relative;">
-                ' . $pending_appointments_total . ' <i class="fas fa-calendar-hourglass" style="color: black;"></i>
-              </h4>';
-    } else {
-        echo '<h4 class="mb-0" style="z-index: 2; position: relative; color: black; ">𝖭𝗈 𝖯𝖾𝗇𝖽𝗂𝗇𝗀 𝖠𝗉𝗉𝗈𝗂𝗇𝗍𝗆𝖾𝗇𝗍𝗌</h4>';
-    }
-} 
-
-mysqli_close($con);
-?>
+            ?>
 
     </div>
 </div>
@@ -414,49 +396,40 @@ mysqli_close($con);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">Appointment Complete</div>
 
        <?php
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';
+            require_once('../connection/dbconfig.php'); 
 
-$con = mysqli_connect($host, $username, $password, $database);
 
-if (!$con) {
-    die('Unable to connect to the database. Check your connection parameters.');
-}
+            // Define the specialty you want to filter by (e.g., Pediatricians)
+            $specialty = 'Pediatricians';  // Example specialty
 
-// Define the specialty you want to filter by (e.g., Pediatricians)
-$specialty = 'Pediatricians';  // Example specialty
+            // Query to fetch all approved appointments for doctors with the "Pediatricians" specialty
+            $approved_appointments_query = "
+                SELECT COUNT(a.appointment_id) AS approved_count 
+                FROM appointments a
+                JOIN doctors d ON a.doctor_id = d.doctor_id
+                WHERE d.specialties = '$specialty' 
+                AND a.status = 'Approved'
+            ";
 
-// Query to fetch all approved appointments for doctors with the "Pediatricians" specialty
-$approved_appointments_query = "
-    SELECT COUNT(a.appointment_id) AS approved_count 
-    FROM appointments a
-    JOIN doctors d ON a.doctor_id = d.doctor_id
-    WHERE d.specialties = '$specialty' 
-    AND a.status = 'Approved'
-";
+            $approved_appointments_query_run = mysqli_query($conn, $approved_appointments_query);
 
-$approved_appointments_query_run = mysqli_query($con, $approved_appointments_query);
+            if ($approved_appointments_query_run) {
+                // Fetch the count of approved appointments
+                $row = mysqli_fetch_assoc($approved_appointments_query_run);
+                $approved_appointments_total = $row['approved_count'];  // Get the count of approved appointments
 
-if ($approved_appointments_query_run) {
-    // Fetch the count of approved appointments
-    $row = mysqli_fetch_assoc($approved_appointments_query_run);
-    $approved_appointments_total = $row['approved_count'];  // Get the count of approved appointments
+                if ($approved_appointments_total > 0) {
+                    echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 25px; position: relative;">
+                            ' . $approved_appointments_total . '  <i class="fas fa-calendar-check" style="color: black;"></i>
+                          </h4>';
+                } else {
+                    echo '<h4 class="mb-0" style="z-index: 2; position: relative;">𝖭𝗈 𝖠𝗉𝗉𝗋𝗈𝗏𝖾𝖽 𝖠𝗉𝗉𝗈𝗂𝗇𝗍𝗆𝖾𝗇𝗍𝗌</h4>';
+                }
+            } else {
+                echo '<h4 class="mb-0" style="z-index: 2; position: relative;">Error fetching data</h4>';
+            }
 
-    if ($approved_appointments_total > 0) {
-        echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 25px; position: relative;">
-                ' . $approved_appointments_total . '  <i class="fas fa-calendar-check" style="color: black;"></i>
-              </h4>';
-    } else {
-        echo '<h4 class="mb-0" style="z-index: 2; position: relative;">𝖭𝗈 𝖠𝗉𝗉𝗋𝗈𝗏𝖾𝖽 𝖠𝗉𝗉𝗈𝗂𝗇𝗍𝗆𝖾𝗇𝗍𝗌</h4>';
-    }
-} else {
-    echo '<h4 class="mb-0" style="z-index: 2; position: relative;">Error fetching data</h4>';
-}
-
-mysqli_close($con);
-?>
+            ?>
 
 
     </div>
@@ -467,48 +440,38 @@ mysqli_close($con);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">Total Appointments</div>
 
        <?php
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';
+            require_once('../connection/dbconfig.php'); 
 
-$con = mysqli_connect($host, $username, $password, $database);
+            // Define the specialty you want to filter by (e.g., Pediatricians)
+            $specialty = 'Pediatricians';  // Example specialty
 
-if (!$con) {
-    die('Unable to connect to the database. Check your connection parameters.');
-}
+            // Query to fetch the total number of appointments for doctors with the "Pediatricians" specialty
+            $total_appointments_query = "
+                SELECT COUNT(a.appointment_id) AS total_appointments 
+                FROM appointments a
+                JOIN doctors d ON a.doctor_id = d.doctor_id
+                WHERE d.specialties = '$specialty'
+            ";
 
-// Define the specialty you want to filter by (e.g., Pediatricians)
-$specialty = 'Pediatricians';  // Example specialty
+            $total_appointments_query_run = mysqli_query($conn, $total_appointments_query);
 
-// Query to fetch the total number of appointments for doctors with the "Pediatricians" specialty
-$total_appointments_query = "
-    SELECT COUNT(a.appointment_id) AS total_appointments 
-    FROM appointments a
-    JOIN doctors d ON a.doctor_id = d.doctor_id
-    WHERE d.specialties = '$specialty'
-";
+            if ($total_appointments_query_run) {
+                // Fetch the count of total appointments
+                $row = mysqli_fetch_assoc($total_appointments_query_run);
+                $total_appointments = $row['total_appointments'];  // Get the total number of appointments
 
-$total_appointments_query_run = mysqli_query($con, $total_appointments_query);
+                if ($total_appointments > 0) {
+                    echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 25px; position: relative;">
+                            ' . $total_appointments . ' <i class="fas fa-calendar-day" style="color: black;"></i>
+                          </h4>';
+                } else {
+                    echo '<h4 class="mb-0" style="z-index: 2; position: relative;">𝖭𝗈 𝖠𝗉𝗉𝗈𝗂𝗇𝗍𝗆𝖾𝗇𝗍𝗌</h4>';
+                }
+            } else {
+                echo '<h4 class="mb-0" style="z-index: 2; position: relative;">Error fetching data</h4>';
+            }
 
-if ($total_appointments_query_run) {
-    // Fetch the count of total appointments
-    $row = mysqli_fetch_assoc($total_appointments_query_run);
-    $total_appointments = $row['total_appointments'];  // Get the total number of appointments
-
-    if ($total_appointments > 0) {
-        echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 25px; position: relative;">
-                ' . $total_appointments . ' <i class="fas fa-calendar-day" style="color: black;"></i>
-              </h4>';
-    } else {
-        echo '<h4 class="mb-0" style="z-index: 2; position: relative;">𝖭𝗈 𝖠𝗉𝗉𝗈𝗂𝗇𝗍𝗆𝖾𝗇𝗍𝗌</h4>';
-    }
-} else {
-    echo '<h4 class="mb-0" style="z-index: 2; position: relative;">Error fetching data</h4>';
-}
-
-mysqli_close($con);
-?>
+            ?>
 
     </div>
 </div>
@@ -516,17 +479,8 @@ mysqli_close($con);
 </div>
 <div class="first1" style="opacity: 0.9; border-top: 2px solid #b2babb;"></div><br>
 <?php
-// Database connection
-$host = 'localhost';
-$user = 'root';
-$password = '';
-$dbname = 'database'; // Replace with your actual database name
+require_once('../connection/dbconfig.php'); 
 
-$conn = new mysqli($host, $user, $password, $dbname);
-
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
 
 
 // Ensure the user is logged in and is a Pediatricians doctor

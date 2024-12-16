@@ -1,6 +1,7 @@
 <?php
 session_name('PharmacyAdminSession'); // Use the session name defined for admin
 session_start(); // Start the session
+require_once('../connection/dbconfig.php'); 
 
 
 
@@ -109,17 +110,8 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Pharmacy Admin') {
 
 <body>
 <?php
-// Database connection
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';
+require_once('../connection/dbconfig.php'); 
 
-$con = mysqli_connect($host, $username, $password, $database);
-
-if (!$con) {
-    die('Unable to connect to the database. Check your connection parameters.');
-}
 
 // Query to fetch low stock items from both tables
 $low_stock_query = "
@@ -132,7 +124,7 @@ $low_stock_query = "
     WHERE remaining_quantity < 15
 ";
 
-$low_stock_query_run = mysqli_query($con, $low_stock_query);
+$low_stock_query_run = mysqli_query($conn, $low_stock_query);
 
 // Initialize an array to store low stock data and count items
 $low_stock_data = [];
@@ -146,7 +138,6 @@ while ($row = mysqli_fetch_assoc($low_stock_query_run)) {
 // Pass low stock count to JavaScript for the badge
 echo '<script>var lowStockCount = ' . json_encode($total_low_stock_items) . ';</script>';
 
-mysqli_close($con);
 ?>
 
 
@@ -321,14 +312,14 @@ mysqli_close($con);
         $password = '';
         $database = 'database';
 
-        $con = mysqli_connect($host, $username, $password, $database);
+        $conn = mysqli_connect($host, $username, $password, $database);
 
-        if (!$con) {
+        if (!$conn) {
             die('Unable to connect to the database. Check your connection parameters.');
         }
 
         $dash_category_query = "SELECT * from pharmacy_medicines_products";
-        $dash_category_query_run = mysqli_query($con, $dash_category_query);
+        $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
         if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 30px; z-index: 2; position: relative;">' . $tblevents_total . '  <i class="fas fa-capsules" style="color: black;"></i></h4>';
@@ -336,7 +327,7 @@ mysqli_close($con);
             echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Data</h4>';
         }
 
-        mysqli_close($con);
+        mysqli_close($conn);
         ?>
         
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
@@ -380,18 +371,18 @@ mysqli_close($con);
         $offset = ($page - 1) * $limit;
 
         // Reconnect to the database to fetch medicines list with pagination
-        $con = mysqli_connect($host, $username, $password, $database);
-        if (!$con) {
+        $conn = mysqli_connect($host, $username, $password, $database);
+        if (!$conn) {
             die('Unable to connect to the database. Check your connection parameters.');
         }
 
         // Query to fetch medicine products with pagination
         $medicines_query = "SELECT * FROM pharmacy_medicines_products LIMIT $limit OFFSET $offset";
-        $medicines_result = mysqli_query($con, $medicines_query);
+        $medicines_result = mysqli_query($conn, $medicines_query);
 
         // Fetch total number of records for pagination
         $total_query = "SELECT COUNT(*) AS total FROM pharmacy_medicines_products";
-        $total_result = mysqli_query($con, $total_query);
+        $total_result = mysqli_query($conn, $total_query);
         $total_row = mysqli_fetch_assoc($total_result);
         $total_records = $total_row['total'];
         $total_pages = ceil($total_records / $limit);
@@ -410,7 +401,6 @@ mysqli_close($con);
             echo "<tr><td colspan='4'>No medicines found</td></tr>";
         }
 
-        mysqli_close($con);
         ?>
     </tbody>
 </table>
@@ -471,22 +461,12 @@ mysqli_close($con);
         <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖯𝗋𝗈𝖽𝗎𝖼𝗍𝗌</div>
         
         <?php
-        // Database connection parameters
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
+        require_once('../connection/dbconfig.php'); 
 
-        // Connect to the database
-        $con = mysqli_connect($host, $username, $password, $database);
-
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
 
         // Query to count total number of products
         $dash_category_query = "SELECT * from pharmacy_products";
-        $dash_category_query_run = mysqli_query($con, $dash_category_query);
+        $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
         if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 30px; z-index: 2; position: relative;">' . $tblevents_total . ' <i class="fas fa-box" style="color: black;"></i></h4>';
@@ -495,7 +475,6 @@ mysqli_close($con);
         }
 
         // Close the database connection
-        mysqli_close($con);
         ?>
         
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
@@ -539,18 +518,18 @@ mysqli_close($con);
                         $offset = ($page - 1) * $limit;
 
                         // Reconnect to the database to fetch products list with pagination
-                        $con = mysqli_connect($host, $username, $password, $database);
-                        if (!$con) {
+                        $conn = mysqli_connect($host, $username, $password, $database);
+                        if (!$conn) {
                             die('Unable to connect to the database. Check your connection parameters.');
                         }
 
                         // Query to fetch product records with pagination
                         $products_query = "SELECT * FROM pharmacy_products LIMIT $limit OFFSET $offset";
-                        $products_result = mysqli_query($con, $products_query);
+                        $products_result = mysqli_query($conn, $products_query);
 
                         // Fetch total number of records for pagination
                         $total_query = "SELECT COUNT(*) AS total FROM pharmacy_products";
-                        $total_result = mysqli_query($con, $total_query);
+                        $total_result = mysqli_query($conn, $total_query);
                         $total_row = mysqli_fetch_assoc($total_result);
                         $total_records = $total_row['total'];
                         $total_pages = ceil($total_records / $limit);
@@ -570,7 +549,6 @@ mysqli_close($con);
                         }
 
                         // Close the database connection
-                        mysqli_close($con);
                         ?>
                     </tbody>
                 </table>
@@ -630,22 +608,12 @@ mysqli_close($con);
         <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖯𝗁𝖺𝗋𝗆𝖺𝖼𝗒 𝖲𝗍𝖺𝖿𝖿</div>
 
         <?php
-        // Database connection parameters
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
+        require_once('../connection/dbconfig.php'); 
 
-        // Connect to the database
-        $con = mysqli_connect($host, $username, $password, $database);
-
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
 
         // Query to count total pharmacy staff (filter only 'Pharmacy Staff' role)
         $dash_category_query = "SELECT * FROM users WHERE role = 'Pharmacy Staff'";
-        $dash_category_query_run = mysqli_query($con, $dash_category_query);
+        $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
         if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
             // Displaying the number of staff
@@ -655,8 +623,7 @@ mysqli_close($con);
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 30px; z-index: 2; position: relative;">' . $tblevents_total . ' <i class="fas fa-user" style="color: black;"></i></h4>';
         }
 
-        // Close the database connection
-        mysqli_close($con);
+
         ?>
 
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
@@ -695,8 +662,8 @@ mysqli_close($con);
                     <tbody>
                         <?php
                         // Reconnect to the database to fetch staff list
-                        $con = mysqli_connect($host, $username, $password, $database);
-                        if (!$con) {
+                        $conn = mysqli_connect($host, $username, $password, $database);
+                        if (!$conn) {
                             die('Unable to connect to the database. Check your connection parameters.');
                         }
 
@@ -707,7 +674,7 @@ mysqli_close($con);
 
                         // Query to fetch staff records with pagination (only 'Pharmacy Staff' role)
                         $staff_query = "SELECT * FROM users WHERE role = 'Pharmacy Staff' LIMIT $limit OFFSET $offset";
-                        $staff_result = mysqli_query($con, $staff_query);
+                        $staff_result = mysqli_query($conn, $staff_query);
 
                         if (mysqli_num_rows($staff_result) > 0) {
                             while ($staff = mysqli_fetch_assoc($staff_result)) {
@@ -724,12 +691,11 @@ mysqli_close($con);
 
                         // Get the total number of staff to calculate the number of pages
                         $total_staff_query = "SELECT COUNT(*) as total_staff FROM users WHERE role = 'Pharmacy Staff'";
-                        $total_staff_result = mysqli_query($con, $total_staff_query);
+                        $total_staff_result = mysqli_query($conn, $total_staff_query);
                         $total_staff = mysqli_fetch_assoc($total_staff_result)['total_staff'];
                         $total_pages = ceil($total_staff / $limit);
 
                         // Close the database connection
-                        mysqli_close($con);
                         ?>
                     </tbody>
                 </table>
@@ -798,23 +764,15 @@ mysqli_close($con);
             <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖳𝗈𝖽𝖺𝗒'𝗌 𝖲𝖺𝗅𝖾</div>
 
         <?php
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
+        require_once('../connection/dbconfig.php'); 
 
-        $con = mysqli_connect($host, $username, $password, $database);
-
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
 
         // Get today's date in the format 'YYYY-MM-DD'
         $today = date('Y-m-d');
 
         // Query to sum the total for today's receipts
         $dash_category_query = "SELECT SUM(total) AS today_total FROM receipts WHERE DATE(created_at) = '$today'";
-        $dash_category_query_run = mysqli_query($con, $dash_category_query);
+        $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
         // Fetch the result
         $row = mysqli_fetch_assoc($dash_category_query_run);
@@ -824,7 +782,6 @@ mysqli_close($con);
        echo '<h4 class="mb-0" style="color: black; margin-left: 5%; z-index: 2; font-size: 30px; position: relative;"> ₱' . number_format($today_total, 2) . ' <i class="fas fa-shopping-cart" style="color: black;"></i></h4>';
 
 
-        mysqli_close($con);
         ?>
 
         <div style=" text-decoration: ; margin-bottom: 15%;"></div>
@@ -837,22 +794,12 @@ mysqli_close($con);
         <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖯𝗁𝖺𝗋𝗆𝖺𝖼𝗒 𝖢𝖺𝗌𝗁𝗂𝖾𝗋</div>
 
         <?php
-        // Database connection parameters
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
+        require_once('../connection/dbconfig.php'); 
 
-        // Connect to the database
-        $con = mysqli_connect($host, $username, $password, $database);
-
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
 
         // Query to count total pharmacy cashiers (filter only 'Pharmacy Cashier' role)
         $dash_category_query = "SELECT * FROM users WHERE role = 'Pharmacy Cashier'";
-        $dash_category_query_run = mysqli_query($con, $dash_category_query);
+        $dash_category_query_run = mysqli_query($conn, $dash_category_query);
 
         if ($tblevents_total = mysqli_num_rows($dash_category_query_run)) {
             // Displaying the number of cashiers
@@ -863,7 +810,6 @@ mysqli_close($con);
         }
 
         // Close the database connection
-        mysqli_close($con);
         ?>
 
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
@@ -902,8 +848,8 @@ mysqli_close($con);
                     <tbody>
                         <?php
                         // Reconnect to the database to fetch cashier list
-                        $con = mysqli_connect($host, $username, $password, $database);
-                        if (!$con) {
+                        $conn = mysqli_connect($host, $username, $password, $database);
+                        if (!$conn) {
                             die('Unable to connect to the database. Check your connection parameters.');
                         }
 
@@ -914,7 +860,7 @@ mysqli_close($con);
 
                         // Query to fetch cashier records with pagination (only 'Pharmacy Cashier' role)
                         $cashier_query = "SELECT * FROM users WHERE role = 'Pharmacy Cashier' LIMIT $limit OFFSET $offset";
-                        $cashier_result = mysqli_query($con, $cashier_query);
+                        $cashier_result = mysqli_query($conn, $cashier_query);
 
                         if (mysqli_num_rows($cashier_result) > 0) {
                             while ($cashier = mysqli_fetch_assoc($cashier_result)) {
@@ -931,12 +877,11 @@ mysqli_close($con);
 
                         // Get the total number of cashiers to calculate the number of pages
                         $total_cashiers_query = "SELECT COUNT(*) as total_cashiers FROM users WHERE role = 'Pharmacy Cashier'";
-                        $total_cashiers_result = mysqli_query($con, $total_cashiers_query);
+                        $total_cashiers_result = mysqli_query($conn, $total_cashiers_query);
                         $total_cashiers = mysqli_fetch_assoc($total_cashiers_result)['total_cashiers'];
                         $total_pages = ceil($total_cashiers / $limit);
 
                         // Close the database connection
-                        mysqli_close($con);
                         ?>
                     </tbody>
                 </table>
@@ -987,26 +932,15 @@ mysqli_close($con);
 </div>
 
     <?php
-    // Database connection parameters
-    $host = 'localhost';
-    $username = 'root';
-    $password = '';
-    $database = 'database';
+   require_once('../connection/dbconfig.php'); 
 
-    // Create connection
-    $con = mysqli_connect($host, $username, $password, $database);
-
-    // Check connection
-    if (!$con) {
-        die('Unable to connect to the database. Check your connection parameters.');
-    }
 
     // Get the current year
     $current_year = date('Y-m-d');
 
     // Query to fetch medicines expired this year and before
     $expired_medicines_query = "SELECT COUNT(*) AS expired_count FROM pharmacy_medicines_products WHERE expiry <= '$current_year'";
-    $expired_medicines_query_run = mysqli_query($con, $expired_medicines_query);
+    $expired_medicines_query_run = mysqli_query($conn, $expired_medicines_query);
     $expired_count = mysqli_fetch_assoc($expired_medicines_query_run)['expired_count'];
 
     // Display the total number of expired medicines
@@ -1017,7 +951,6 @@ mysqli_close($con);
     }
 
     // Close the connection
-    mysqli_close($con);
     ?>
 
         <div style=" text-decoration: ; margin-bottom: 15%;"></div>
@@ -1030,19 +963,11 @@ mysqli_close($con);
         <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖱𝖾𝖼𝖾𝗂𝗉𝗍𝗌</div>
         
         <?php
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
+        require_once('../connection/dbconfig.php'); 
 
-        $con = mysqli_connect($host, $username, $password, $database);
-
-        if (!$con) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
 
         $dash_receipt_query = "SELECT * from receipts"; // Change this to the appropriate table for receipts
-        $dash_receipt_query_run = mysqli_query($con, $dash_receipt_query);
+        $dash_receipt_query_run = mysqli_query($conn, $dash_receipt_query);
 
         if ($tblevents_total = mysqli_num_rows($dash_receipt_query_run)) {
             echo '<h4 class="mb-0" style="color: black; margin-left: 5%; font-size: 30px; z-index: 2; position: relative;">' . $tblevents_total . '  <i class="fas fa-receipt" style="color: black;"></i></h4>';
@@ -1050,7 +975,6 @@ mysqli_close($con);
             echo '<h4 class="mb-0" style="z-index: 2; position: relative;">No Receipts</h4>';
         }
 
-        mysqli_close($con);
         ?>
         
         <div class="card-footer d-flex align-items-center justify-content-between" style="position: relative; z-index: 2;">
@@ -1095,18 +1019,18 @@ mysqli_close($con);
                         $offset = ($page - 1) * $limit;
 
                         // Reconnect to the database to fetch receipts list with pagination
-                        $con = mysqli_connect($host, $username, $password, $database);
-                        if (!$con) {
+                        $conn = mysqli_connect($host, $username, $password, $database);
+                        if (!$conn) {
                             die('Unable to connect to the database. Check your connection parameters.');
                         }
 
                         // Query to fetch receipt data with pagination
                         $receipts_query = "SELECT * FROM receipts LIMIT $limit OFFSET $offset"; // Modify to match your table name and fields
-                        $receipts_result = mysqli_query($con, $receipts_query);
+                        $receipts_result = mysqli_query($conn, $receipts_query);
 
                         // Fetch total number of records for pagination
                         $total_query = "SELECT COUNT(*) AS total FROM receipts";
-                        $total_result = mysqli_query($con, $total_query);
+                        $total_result = mysqli_query($conn, $total_query);
                         $total_row = mysqli_fetch_assoc($total_result);
                         $total_records = $total_row['total'];
                         $total_pages = ceil($total_records / $limit);
@@ -1125,7 +1049,6 @@ mysqli_close($con);
                             echo "<tr><td colspan='5'>No receipts found</td></tr>";
                         }
 
-                        mysqli_close($con);
                         ?>
                     </tbody>
                 </table>
@@ -1180,19 +1103,8 @@ mysqli_close($con);
 
 <div class="first1" style="opacity: 0.9; border-top: 2px solid #b2babb;"></div>
     <?php
-// Database connection parameters
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';
+require_once('../connection/dbconfig.php'); 
 
-// Establish the connection
-$con = mysqli_connect($host, $username, $password, $database);
-
-// Check the connection
-if (!$con) {
-    die('Unable to connect to the database. Check your connection parameters.');
-}
 
 // Initialize arrays to store low stock items
 $low_stock_medicines = [];
@@ -1200,7 +1112,7 @@ $low_stock_products = [];
 
 // Query to get low stock items from pharmacy_medicines_products where remain_quantity <= 15
 $low_stock_query_medicines = "SELECT medicine_product AS product, remain_quantity AS quantity FROM pharmacy_medicines_products WHERE CAST(remain_quantity AS UNSIGNED) <= 15";
-$low_stock_query_run_medicines = mysqli_query($con, $low_stock_query_medicines);
+$low_stock_query_run_medicines = mysqli_query($conn, $low_stock_query_medicines);
 
 // Fetch low stock items from pharmacy_medicines_products
 while ($row = mysqli_fetch_assoc($low_stock_query_run_medicines)) {
@@ -1212,7 +1124,7 @@ while ($row = mysqli_fetch_assoc($low_stock_query_run_medicines)) {
 
 // Query to get low stock items from pharmacy_products where remaining_quantity <= 15
 $low_stock_query_products = "SELECT product, remaining_quantity AS quantity FROM pharmacy_products WHERE remaining_quantity <= 15";
-$low_stock_query_run_products = mysqli_query($con, $low_stock_query_products);
+$low_stock_query_run_products = mysqli_query($conn, $low_stock_query_products);
 
 // Fetch low stock items from pharmacy_products
 while ($row = mysqli_fetch_assoc($low_stock_query_run_products)) {
@@ -1222,8 +1134,7 @@ while ($row = mysqli_fetch_assoc($low_stock_query_run_products)) {
     ];
 }
 
-// Close the database connection after all queries
-mysqli_close($con);
+
 ?>
 
 <div class="container mt-5" style="border-top: blue;">
@@ -1334,21 +1245,12 @@ mysqli_close($con);
     </div>
 </div>
 <?php
-// PHP code to fetch monthly sales data
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';
+require_once('../connection/dbconfig.php'); 
 
-$con = mysqli_connect($host, $username, $password, $database);
-
-if (!$con) {
-    die('Unable to connect to the database. Check your connection parameters.');
-}
 
 // Query to get total sales grouped by month
 $sales_query = "SELECT SUM(total) AS monthly_total, MONTH(created_at) AS month FROM receipts WHERE YEAR(created_at) = YEAR(CURDATE()) GROUP BY MONTH(created_at)";
-$sales_query_run = mysqli_query($con, $sales_query);
+$sales_query_run = mysqli_query($conn, $sales_query);
 
 // Initialize an array to store monthly sales
 $sales_data = array_fill(0, 12, 0); // Default 12 months with 0 sales
@@ -1360,7 +1262,7 @@ while ($row = mysqli_fetch_assoc($sales_query_run)) {
 
 // Query to fetch expired medicines from the current year
 $expiry_query = "SELECT medicine_product, expiry FROM pharmacy_medicines_products WHERE YEAR(expiry) = YEAR(CURDATE()) AND expiry < CURDATE()";
-$expiry_query_run = mysqli_query($con, $expiry_query);
+$expiry_query_run = mysqli_query($conn, $expiry_query);
 
 // Initialize an array to store expired medicines
 $expired_medicines = [];
@@ -1371,7 +1273,6 @@ while ($row = mysqli_fetch_assoc($expiry_query_run)) {
 // Pass the sales data as a JSON array to JavaScript
 echo '<script>var monthlySales = ' . json_encode($sales_data) . ';</script>';
 
-mysqli_close($con);
 ?>
 <div class="container mt-5">
     <div class="row">

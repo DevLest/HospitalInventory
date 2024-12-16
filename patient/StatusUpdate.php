@@ -1,14 +1,6 @@
 <?php
-$host = 'localhost';
-$user = 'root';
-$password = '';
-$dbname = 'database';
+require_once('../connection/dbconfig.php'); 
 
-$conn = new mysqli($host, $user, $password, $dbname);
-
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
 
 if (isset($_POST['appointment_id']) && isset($_POST['status'])) {
     $appointment_id = $_POST['appointment_id'];

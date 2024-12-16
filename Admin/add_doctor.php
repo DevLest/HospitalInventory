@@ -1,14 +1,6 @@
 <?php
-// Database connection
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$database = 'database';
-$con = mysqli_connect($host, $username, $password, $database);
+require_once('../connection/dbconfig.php'); 
 
-if (!$con) {
-    die('Database connection failed: ' . mysqli_connect_error());
-}
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -39,15 +31,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $query = "INSERT INTO doctors (name, email, clinic_address, contact_number, specialties, username, password, image, license) 
                   VALUES ('$name', '$email', '$clinic_address', '$contact_number', '$specialties', '$username', '$hashed_password', '$relative_path', '$license')";
 
-        if (mysqli_query($con, $query)) {
+        if (mysqli_query($conn, $query)) {
             echo "<script>alert('Doctor successfully added!'); window.location.href = 'Addodoc.php';</script>";
         } else {
-            echo "Error: " . mysqli_error($con);
+            echo "Error: " . mysqli_error($conn);
         }
     } else {
         echo "<script>alert('Failed to upload image. Please try again.');</script>";
     }
 }
 
-mysqli_close($con);
+mysqli_close($conn);
 ?>

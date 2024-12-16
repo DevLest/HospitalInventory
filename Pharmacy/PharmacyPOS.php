@@ -2,8 +2,6 @@
 session_name('PharmacyCashierSession'); // Use the same session name as when the user logged in
 session_start(); // Start session
 
-require_once "dbconfig.php";
-
 // Check if user is logged in
 if (!isset($_SESSION['username'])) {
     header('Location: login.php?error=Please log in first');
@@ -13,6 +11,8 @@ if (!isset($_SESSION['username'])) {
 // Page content for logged-in users
 ?>
 <?php
+require_once('../connection/dbconfig.php'); 
+
 
 // Check if form is submitted to update quantity
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_quantity'])) {
@@ -374,19 +374,8 @@ $result = $conn->query($sql);
 
            <!-- Product Code -->
 <?php
-// Database connection details
-$servername = "localhost"; // Replace with your server name
-$username = "root"; // Replace with your database username
-$password = ""; // Replace with your database password
-$dbname = "database"; // Replace with your database name
+require_once('../connection/dbconfig.php'); 
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Fetch search query
 $search_product_name = isset($_GET['product_name1']) ? $_GET['product_name1'] : '';
@@ -543,8 +532,6 @@ if ($result->num_rows > 0) {
     echo "₱ 0.00"; // In case there are no results
 }
 
-// Close the connection
-$conn->close();
 ?>
 </div>
 <br>

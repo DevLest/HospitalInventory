@@ -1,20 +1,8 @@
 <?php
 session_name('PharmacyStaffSession'); // Use the same session name as login
 session_start(); // Start session
+require_once('../connection/dbconfig.php'); 
 
-// Database connection details
-$host = 'localhost';
-$user = 'root';
-$password = '';
-$dbname = 'database'; // Replace with your actual database name
-
-// Create connection
-$conn = new mysqli($host, $user, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Check if the request is POST and for logout action
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

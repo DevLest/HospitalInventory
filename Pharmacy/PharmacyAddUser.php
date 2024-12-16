@@ -1,15 +1,6 @@
 <?php
-// Database connection
-$host = 'localhost';
-$user = 'root';
-$password = ''; // Set your database password if any
-$dbname = 'database'; // Replace with your actual database name
+require_once('../connection/dbconfig.php'); 
 
-$conn = new mysqli($host, $user, $password, $dbname);
-
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];

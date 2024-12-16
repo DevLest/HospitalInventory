@@ -1,7 +1,6 @@
 <?php
-$db = mysqli_connect('localhost', 'root', '') or
-                die ('Unable to connect. Check your connection parameters.');
-                mysqli_select_db($db, 'data') or die(mysqli_error($db));
+require_once('../connection/dbconfig.php'); 
+
 
     $hospitalnum = $_POST["hospitalnum"];
  	$lastname = $_POST["lastname"];
@@ -22,18 +21,17 @@ $db = mysqli_connect('localhost', 'root', '') or
         $query = "INSERT INTO patient
                         (id, hospitalnum, lastname, firstname, middlename, address, age, birthday, birthplace, civilstatus, gender, mobile, religion, occupation,date)
                 VAlUES ('Null','". $hospitalnum ."','". $lastname ."', '" . $firstname ."', '" . $middlename ."', '" . $address ."', '" . $age ."', '" . $birthday ."', '" . $birthplace ."', '" . $civilstatus ."', '" . $gender ."', '" . $mobile ."', '" . $religion ."', '" . $occupation ."', '" . $date ."')";        
-    mysqli_query($db, $query) or die('Error in updating record in Database');
+    mysqli_query($conn, $query) or die('Error in updating record in Database');
 
     
 ?>
 
 <?php
-$db = mysqli_connect('localhost', 'root', '') or
-        die ('Unable to connect. Check your connection parameters.');
-        mysqli_select_db($db, 'data') or die(mysqli_error($db));
+require_once('../connection/dbconfig.php'); 
+
 
 $query = "SELECT * FROM patient";
-$results = mysqli_query($db, $query);
+$results = mysqli_query($conn, $query);
 ?>
 <!DOCTYPE html>
 <html lang="en">

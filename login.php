@@ -39,17 +39,8 @@ function startRoleBasedSession($roleOrSpecialty) {
     session_start(); // Start session with the defined session name
 }
 
-// Database connection
-$host = 'localhost';
-$user = 'root';
-$password = '';
-$dbname = 'database'; // Replace with your actual database name
+require_once('connection/dbconfig.php'); 
 
-$conn = new mysqli($host, $user, $password, $dbname);
-
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
 
 // Function to sanitize input
 function sanitize_input($data) {

@@ -1,6 +1,5 @@
 <?php
-// Database connection
-$db = mysqli_connect('localhost', 'root', '', 'database') or die ('Unable to connect. Check your connection parameters.');
+require_once('../connection/dbconfig.php'); 
 
 // Check if patient_id is set in the URL
 if(isset($_GET['patient_id'])) {
@@ -33,7 +32,7 @@ if(isset($_GET['patient_id'])) {
               WHERE patient_id = $patient_id";
 
     // Execute the query
-    $result = mysqli_query($db, $query);
+    $result = mysqli_query($conn, $query);
 
     // Check if the query was successful
     if($result) {
@@ -44,10 +43,10 @@ exit;
 
         exit();
     } else {
-        echo "Error updating record in Database: " . mysqli_error($db);
+        echo "Error updating record in Database: " . mysqli_error($conn);
     }
 } else {
     echo "Patient ID not provided!";
 }
-mysqli_close($db);
+mysqli_close($conn);
 ?>

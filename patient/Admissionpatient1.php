@@ -1,14 +1,13 @@
 <?php
-$db = mysqli_connect('localhost', 'root', '') or
-    die ('Unable to connect. Check your connection parameters.');
-mysqli_select_db($db, 'outpatient') or die(mysqli_error($db));
+require_once('../connection/dbconfig.php'); 
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get the selected patient_id from the form
     $patient_id = isset($_POST["patient_id"]) ? $_POST["patient_id"] : '';
 
     // Fetch patient information based on the selected patient_id
-    $patient_query = mysqli_query($db, "SELECT * FROM patients WHERE id = '$patient_id'");
+    $patient_query = mysqli_query($conn, "SELECT * FROM patients WHERE id = '$patient_id'");
     $patient_row = mysqli_fetch_assoc($patient_query);
 
     if ($patient_row) {
@@ -27,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $query = "INSERT INTO patientadmission
             (admission_id, patient_id, admittedby, parent_name, ward, attending_physician, chargeaccountto, relationtoparent, address, mobilenumber, totalpayment)
             VALUES (NULL, '$patient_id', '$admittedby', '$parent_name', '$ward', '$attending_physician', '$chargeaccountto', '$relationtoparent', '$address', '$mobilenumber', '$totalpayment')";
-        mysqli_query($db, $query) or die('Error in updating record in Database: ' . mysqli_error($db));
+        mysqli_query($db, $query) or die('Error in updating record in Database: ' . mysqli_error($conn));
     }
 }
 ?>
@@ -35,20 +34,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 <?php
-// Database connection
-$db = mysqli_connect('localhost', 'root', '') or die ('Unable to connect. Check your connection parameters.');
-mysqli_select_db($db, 'outpatient') or die(mysqli_error($db));
+require_once('../connection/dbconfig.php'); 
 
 // Retrieve the patient's ID from the URL parameter
 $patient_id = $_GET['id'];
 
 // Fetch the patient's details
 $query = "SELECT * FROM patients WHERE id = $patient_id";
-$result = mysqli_query($db, $query);
+$result = mysqli_query($conn, $query);
 $patient = mysqli_fetch_assoc($result);
 
 // Close the database connection
-mysqli_close($db);
+mysqli_close($conn);
 ?>
 
 
@@ -206,12 +203,11 @@ mysqli_close($db);
                       </article>
 
 <?php
-$db = mysqli_connect('localhost', 'root', '') or
-        die ('Unable to connect. Check your connection parameters.');
-        mysqli_select_db($db, 'outpatient') or die(mysqli_error($db));
+require_once('../connection/dbconfig.php'); 
+
 
 $query = "SELECT * FROM patients";
-$results = mysqli_query($db, $query);
+$results = mysqli_query($conn, $query);
 ?>
                   <article style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); height: 67%; width: 67%;">
                     <div class="hello" style="background-color: #D5D8DC; height: 50px;">
@@ -328,8 +324,8 @@ $results = mysqli_query($db, $query);
                 </script>
 
     <?php
-    $db = mysqli_connect('localhost', 'root', '') or die ('Unable to connect. Check your connection parameters.');
-    mysqli_select_db($db, 'outpatient') or die(mysqli_error($db));
+    require_once('../connection/dbconfig.php'); 
+
 
     // Check if the form is submitted
     if(isset($_POST['save'])) {
@@ -339,7 +335,7 @@ $results = mysqli_query($db, $query);
     }
 
     $query = "SELECT * FROM patientadmission WHERE patient_id = '$patient_id'";
-    $results = mysqli_query($db, $query);
+    $results = mysqli_query($conn, $query);
     ?>
                         <div class="hello" style="background-color: #D5D8DC; height: 50px; ">
                             <h1 style="font-size: 25px; text-align: left; color: green; margin-bottom: 40px; padding: 10px;">

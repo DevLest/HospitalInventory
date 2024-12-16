@@ -8,17 +8,8 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
-// Database connection
-$host = 'localhost';
-$user = 'root';
-$password = '';
-$dbname = 'database';  // Replace with your database name
+require_once('../connection/dbconfig.php'); 
 
-$conn = new mysqli($host, $user, $password, $dbname);
-
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $one = intval($_POST['one']);

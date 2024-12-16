@@ -1,18 +1,7 @@
 <?php
 session_start();
 
-// Database connection
-$host = 'localhost';
-$user = 'root';
-$password = '';
-$dbname = 'database'; // Replace with your actual database name
-
-$conn = new mysqli($host, $user, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+require_once('../connection/dbconfig.php'); 
 
 // Check if a POST request is made
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

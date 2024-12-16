@@ -133,17 +133,8 @@ td img {
     </div>
 
  <?php
-// Database connection
-$host = 'localhost';
-$user = 'root';
-$password = '';
-$dbname = 'database'; // Replace with your actual database name
+require_once('../connection/dbconfig.php'); 
 
-$conn = new mysqli($host, $user, $password, $dbname);
-
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
 
 // Fetch user data
 $query = "SELECT * FROM users"; // Modify as needed for your specific needs
@@ -166,13 +157,8 @@ $result = $conn->query($query);
 
 <!-- Table of Users -->
 <?php
-// Database connection
-$conn = new mysqli('localhost', 'root', '', 'database');
+require_once('../connection/dbconfig.php'); 
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Set pagination and search parameters
 $itemsPerPage = 6;
@@ -434,8 +420,7 @@ echo "<div class='modal fade' id='editModal{$user['id']}' tabindex='-1' role='di
 
 
 <?php
-// Database connection
-$conn = mysqli_connect("localhost", "root", "", "database");
+require_once('../connection/dbconfig.php'); 
 
 // Fetch search term and pagination parameters
 $search = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
