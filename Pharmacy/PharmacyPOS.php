@@ -492,19 +492,8 @@ $result = $stmt->get_result();
         <div class="right-table-header1">
            <div style="font-weight: bold;">Today's Sales: ₱
  <?php
-// Database connection details
-$servername = "localhost"; 
-$username = "root"; 
-$password = "";
-$dbname = "database"; 
+require_once('../connection/dbconfig.php'); 
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 
 // Get today's date
 $today = date('Y-m-d');

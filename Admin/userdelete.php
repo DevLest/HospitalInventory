@@ -21,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['user_id'])) {
         echo "Error deleting user: " . mysqli_error($conn);
     }
 
-    // Close the connection
-    mysqli_close($conn);
+
 }
 ?>

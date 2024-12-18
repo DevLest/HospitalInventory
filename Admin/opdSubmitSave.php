@@ -48,5 +48,4 @@ exit;
 } else {
     echo "Patient ID not provided!";
 }
-mysqli_close($conn);
 ?>

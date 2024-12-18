@@ -53,6 +53,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Error: " . $query . "<br>" . $conn->error;
     }
 
-    $conn->close();
 }
 ?>

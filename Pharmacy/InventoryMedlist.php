@@ -22,8 +22,7 @@ $total_records = $total_records_result->fetch_array()[0];
 // Calculate the total number of pages
 $total_pages = ceil($total_records / $records_per_page);
 
-// Close the connection
-$conn->close();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -60,5 +60,4 @@ if (is_array($data) && !empty($data)) {
     ]);
 }
 
-$conn->close();
 ?>

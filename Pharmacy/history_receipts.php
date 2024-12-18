@@ -25,6 +25,4 @@ if ($result->num_rows > 0) {
     echo "<tr><td colspan='7'>No receipts found</td></tr>";
 }
 
-// Close connection
-$conn->close();
 ?>

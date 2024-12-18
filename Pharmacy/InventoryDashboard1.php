@@ -307,16 +307,7 @@ echo '<script>var lowStockCount = ' . json_encode($total_low_stock_items) . ';</
         <div class="card-body" style="color: green; font-weight: bold; font-size: 22px;">𝖬𝖾𝖽𝗂𝖼𝗂𝗇𝖾𝗌</div>
         
         <?php
-        $host = 'localhost';
-        $username = 'root';
-        $password = '';
-        $database = 'database';
-
-        $conn = mysqli_connect($host, $username, $password, $database);
-
-        if (!$conn) {
-            die('Unable to connect to the database. Check your connection parameters.');
-        }
+        require_once('../connection/dbconfig.php'); 
 
         $dash_category_query = "SELECT * from pharmacy_medicines_products";
         $dash_category_query_run = mysqli_query($conn, $dash_category_query);
@@ -371,7 +362,7 @@ echo '<script>var lowStockCount = ' . json_encode($total_low_stock_items) . ';</
         $offset = ($page - 1) * $limit;
 
         // Reconnect to the database to fetch medicines list with pagination
-        $conn = mysqli_connect($host, $username, $password, $database);
+        $conn = mysqli_connect($host, $username, $password, $dbname);
         if (!$conn) {
             die('Unable to connect to the database. Check your connection parameters.');
         }
@@ -518,7 +509,7 @@ echo '<script>var lowStockCount = ' . json_encode($total_low_stock_items) . ';</
                         $offset = ($page - 1) * $limit;
 
                         // Reconnect to the database to fetch products list with pagination
-                        $conn = mysqli_connect($host, $username, $password, $database);
+                        $conn = mysqli_connect($host, $username, $password, $dbname);
                         if (!$conn) {
                             die('Unable to connect to the database. Check your connection parameters.');
                         }
@@ -662,7 +653,7 @@ echo '<script>var lowStockCount = ' . json_encode($total_low_stock_items) . ';</
                     <tbody>
                         <?php
                         // Reconnect to the database to fetch staff list
-                        $conn = mysqli_connect($host, $username, $password, $database);
+                        $conn = mysqli_connect($host, $username, $password, $dbname);
                         if (!$conn) {
                             die('Unable to connect to the database. Check your connection parameters.');
                         }
@@ -848,7 +839,7 @@ echo '<script>var lowStockCount = ' . json_encode($total_low_stock_items) . ';</
                     <tbody>
                         <?php
                         // Reconnect to the database to fetch cashier list
-                        $conn = mysqli_connect($host, $username, $password, $database);
+                        $conn = mysqli_connect($host, $username, $password, $dbname);
                         if (!$conn) {
                             die('Unable to connect to the database. Check your connection parameters.');
                         }
@@ -1019,7 +1010,7 @@ echo '<script>var lowStockCount = ' . json_encode($total_low_stock_items) . ';</
                         $offset = ($page - 1) * $limit;
 
                         // Reconnect to the database to fetch receipts list with pagination
-                        $conn = mysqli_connect($host, $username, $password, $database);
+                        $conn = mysqli_connect($host, $username, $password, $dbname);
                         if (!$conn) {
                             die('Unable to connect to the database. Check your connection parameters.');
                         }

@@ -47,8 +47,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo "Error updating record: " . $conn->error;
     }
 
-    $stmt->close();
 }
 
-$conn->close();
 ?>

@@ -55,7 +55,7 @@ if ($result->num_rows > 0) {
 
 // Close the file and connection
 fclose($fp);
-$conn->close();
+
 
 // Success message
 echo "Backup successful!";

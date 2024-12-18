@@ -33,7 +33,6 @@ $stmt->execute();
 
 if ($stmt->affected_rows > 0) {
     $receiptId = $stmt->insert_id; // Get the last inserted ID
-    $stmt->close();
 
     // Insert items into receipt_items table
     $sql = "INSERT INTO receipt_items (receipt_id, medicine_product, quantity, price, total) VALUES (?, ?, ?, ?, ?)";
@@ -54,6 +53,4 @@ if ($stmt->affected_rows > 0) {
     echo json_encode(['status' => 'error', 'message' => 'Failed to save receipt']);
 }
 
-// Close the connection
-$conn->close();
 ?>
